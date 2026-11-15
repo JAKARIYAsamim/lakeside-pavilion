@@ -1,0 +1,4 @@
+        <div class="m m-rig" style="--x:990; --y:379; --w:24">
+          <img class="m-cable" src="assets/site/cable.png" alt="" style="--x:2; --y:0; --w:22">
+          <img class="m-hook" src="assets/site/hook.png" alt="" style="--x:0; --y:40; --w:24">
+        </div>

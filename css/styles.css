@@ -1,0 +1,1370 @@
+/* ==========================================================================
+   Lakeside Pavilion: coming soon hero
+   --------------------------------------------------------------------------
+   How it is built
+   - .frame is a 16:9 box as wide as the page. Everything inside it is placed
+     with the unit --u, which equals one pixel of the 1672 x 941 design.
+     "calc(42 * var(--u))" therefore means "42px in the design", and the whole
+     composition scales together with the browser width.
+   - Three stacked layers create the depth: the photo, the giant name, and a
+     cut-out of the pin on top (so the pin covers part of the name).
+   - Below 641px wide the same pieces stack under the photo (phone layout).
+   ========================================================================== */
+
+/* ---------- fonts (Inter, SIL Open Font License, see assets/fonts) ---------- */
+@font-face { font-family: "LP Display"; font-weight: 500; font-display: swap; src: url("../assets/fonts/InterDisplay-Medium.woff") format("woff"); }
+@font-face { font-family: "LP Display"; font-weight: 700; font-display: swap; src: url("../assets/fonts/InterDisplay-Bold.woff2") format("woff2"); }   /* the giant name */
+@font-face { font-family: "LP Text"; font-weight: 400; font-display: swap; src: url("../assets/fonts/Inter-Regular.woff") format("woff"); }
+@font-face { font-family: "LP Text"; font-weight: 600; font-display: swap; src: url("../assets/fonts/Inter-SemiBold.woff") format("woff"); }
+
+/* ---------- settings: the values you are most likely to change ---------- */
+:root {
+  --paper: #FBF8F1;          /* text on the photo, button and card background */
+  --ivory: #F3E9DA;          /* brand Warm Ivory: the background of the light sections (About and the ownership offer) */
+  --ink: #0B1F19;            /* dark text, page background */
+  --emerald-dark: #022D1E; /* brand dark Emerald Green: the green area (number strip, gallery) and the grass fading into it;
+                                in fades it is written as rgb(2 45 30 / ...) */
+  --emerald: #0F3D30;        /* brand green (hover on the round send button) */
+  --gold: #D8C08A;           /* brand gold (button hover, focus ring) */
+  --rule: rgba(11, 31, 25, .22);
+
+  --vignette: .62;           /* darkness of the image corners: 0 = off, 1 = very dark */
+  --vignette-clear: 46%;     /* how far from the centre the image stays fully bright */
+
+  --display: "LP Display", "Helvetica Neue", Arial, sans-serif;
+  --body: "LP Text", "Helvetica Neue", Arial, sans-serif;
+
+  --intro-speed: 1;          /* opening animation: 1 = normal, 2 = twice as slow, .5 = twice as fast */
+
+  --u: 0.0598086cqw;         /* one design pixel (100 / 1672). Do not change. */
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--ink); color: var(--paper); font-family: var(--body); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+p, h1 { margin: 0; }
+
+/* ==========================================================================
+   PHONE LAYOUT (default): photo on top, text stacked underneath
+   ========================================================================== */
+.frame { display: flex; flex-direction: column; background: var(--ink); }
+
+.nav { order: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; }
+.mark { font-family: var(--display); font-weight: 500; font-size: 26px; letter-spacing: -.04em; line-height: 1; }
+.mark img { display: block; height: 1.75em; width: auto; }
+.links { display: none; }
+.contact {
+  display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 5px 0 16px;
+  border-radius: 999px; background: var(--paper); color: var(--ink); font-size: 14px; white-space: nowrap;
+}
+.contact svg, .send svg { display: block; }
+.dot { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: var(--paper); }
+
+.photo { order: 2; position: relative; aspect-ratio: 1 / 1; overflow: hidden; }
+/* .scene is the photo at its true 16:9 shape, centred in the square. The machines are placed inside it. */
+.scene { position: absolute; top: 0; left: 50%; translate: -50% 0; height: 100%; aspect-ratio: 1672 / 941; container-type: inline-size; }
+.scene .plate { display: block; width: 100%; height: 100%; max-width: none; }
+.pin { display: none; }
+
+/* vignette: dark toward the edges, clear over the land. It lies under the name and the pin. */
+.photo::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 62% 70% at 49.5% 54%,
+    rgb(4 12 10 / 0) 0%,
+    rgb(4 12 10 / 0) var(--vignette-clear),
+    rgb(4 12 10 / calc(var(--vignette) * .16)) 58%,
+    rgb(4 12 10 / calc(var(--vignette) * .42)) 72%,
+    rgb(4 12 10 / calc(var(--vignette) * .71)) 86%,
+    rgb(4 12 10 / var(--vignette)) 100%);
+}
+
+.corner { order: 3; padding: 22px 16px 0; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+.corner br { display: none; }
+.giant { order: 4; padding: 8px 16px 0; font-family: var(--display); font-weight: 700; font-size: 15.4vw; line-height: .96; letter-spacing: -.02em; }
+.giant span { display: block; }
+.tag { order: 6; padding: 22px 16px 0; font-family: var(--display); font-weight: 500; font-size: 26px; line-height: 1.04; letter-spacing: -.02em; text-transform: uppercase; }
+.cta {
+  order: 7; align-self: flex-start; margin: 18px 16px 0; position: relative;
+  display: inline-flex; align-items: center; gap: 14px; height: 52px; padding: 0 26px;
+  border-radius: 999px; background: var(--paper); color: var(--ink);
+  font-weight: 600; font-size: 15px; letter-spacing: -.01em; text-transform: uppercase; white-space: nowrap;
+}
+.cta::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }
+.facts { order: 8; padding: 22px 16px 0; font-size: 14px; line-height: 1.25; text-transform: uppercase; }
+/* countdown to launch: four numbers with their units, thin lines between them */
+.count { order: 8; padding: 24px 16px 0; }
+.count-in { display: flex; }
+.count-cell { margin: 0; padding: 0 16px; border-left: 1px solid rgb(251 248 241 / .28); display: flex; flex-direction: column; gap: 6px; }
+.count-cell:first-child { padding-left: 0; border-left: 0; }
+.count-num { font-size: 34px; font-weight: 400; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.count-unit { font-size: 10px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+.count.is-done .count-in { font-size: 26px; letter-spacing: -.02em; }
+
+.card { order: 9; margin: 22px 16px 24px; padding: 20px; border-radius: 18px; background: var(--paper); color: var(--ink); }
+.card .big { font-family: var(--display); font-weight: 500; font-size: 38px; line-height: 1; letter-spacing: -.03em; }
+.card label { display: block; margin: 8px 0 14px; font-size: 14px; line-height: 1.25; }
+.row { display: flex; gap: 8px; }
+.row input {
+  flex: 1; min-width: 0; height: 42px; padding: 0 14px; border: 1px solid var(--rule); border-radius: 999px;
+  background: transparent; color: var(--ink); font: 400 14px var(--body);
+}
+.row input::placeholder { color: rgba(11, 31, 25, .55); }
+.send { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border: 0; border-radius: 50%; background: var(--ink); color: var(--paper); cursor: pointer; }
+.note { margin-top: 8px; font-size: 12px; line-height: 1.3; color: var(--emerald); }
+.note:empty { display: none; }
+
+.contact:hover, .cta:hover { background: var(--gold); }
+.send:hover { background: var(--emerald); }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.card :focus-visible { outline-color: var(--emerald); }
+
+/* ==========================================================================
+   DESKTOP LAYOUT (641px and wider): the 16:9 composition
+   Numbers are design pixels on a 1672 x 941 frame. Change a number to move
+   or resize that piece.
+   ========================================================================== */
+@media (min-width: 641px) {
+  .frame { display: block; position: relative; width: 100%; aspect-ratio: 1672 / 941; overflow: hidden; container-type: inline-size; }
+  .frame > * { position: absolute; order: 0; margin: 0; padding: 0; }
+
+  /* layers */
+  .photo, .pin { inset: 0; width: 100%; height: 100%; aspect-ratio: auto; }
+  .scene { left: 0; translate: none; width: 100%; aspect-ratio: auto; }
+  .pin { display: block; max-width: none; pointer-events: none; }
+  .scene .pin-top { display: none; }      /* desktop uses the pin cut-out above the name instead */
+
+  /* menu row */
+  .nav { inset: 0 0 auto 0; height: calc(92 * var(--u)); padding: 0 calc(34 * var(--u)) 0 calc(40 * var(--u)); gap: 0; justify-content: flex-start; }
+  .mark { font-size: calc(34 * var(--u)); }
+  .links { display: flex; gap: calc(46 * var(--u)); margin-left: calc(190 * var(--u)); font-size: calc(17 * var(--u)); }
+  .contact { margin-left: auto; gap: calc(14 * var(--u)); height: calc(48 * var(--u)); padding: 0 calc(6 * var(--u)) 0 calc(20 * var(--u)); font-size: calc(16 * var(--u)); }
+  .dot { width: calc(36 * var(--u)); height: calc(36 * var(--u)); }
+  .dot svg { width: calc(16 * var(--u)); height: calc(16 * var(--u)); }
+
+  /* giant name: font-size sets the letter size; left/top place each word.
+     The pin spans roughly x 700 to 975, so w1 ends just inside its left edge
+     and w2 starts just inside its right edge. */
+  .giant { inset: 0; font-size: calc(154 * var(--u)); line-height: 1; letter-spacing: -.03em; }
+  .giant span { position: absolute; white-space: nowrap; }
+  .giant .w1 { left: calc(42 * var(--u)); top: calc(78.5 * var(--u)); }
+  .giant .w2 { left: calc(955 * var(--u)); top: calc(200.5 * var(--u)); }
+
+  /* small text blocks */
+  .corner { right: calc(46 * var(--u)); top: calc(114 * var(--u)); text-align: right; font-size: calc(19 * var(--u)); line-height: 1.15; letter-spacing: 0; color: var(--paper); }
+  .corner br { display: inline; }
+
+  .tag { left: calc(40 * var(--u)); top: calc(753 * var(--u)); font-size: calc(46 * var(--u)); line-height: 1; letter-spacing: -.03em; }
+  /* gold button: centred, sitting just above the countdown */
+  .cta { left: 0; right: 0; width: fit-content; margin-inline: auto; top: calc(750 * var(--u)); gap: calc(16 * var(--u)); height: calc(60 * var(--u)); padding: 0 calc(34 * var(--u)); font-size: calc(18 * var(--u)); }
+  .cta::after { width: calc(8 * var(--u)); height: calc(8 * var(--u)); }
+  .facts { left: calc(262 * var(--u)); top: calc(850 * var(--u)); font-size: calc(17 * var(--u)); line-height: 1.22; }
+  /* countdown: centred along the bottom of the hero, over the water (836 = the middle of the 1672 design) */
+  .count { left: calc(836 * var(--u)); top: calc(838 * var(--u)); }
+  .count-in { translate: -50% 0; text-shadow: 0 1px calc(14 * var(--u)) rgb(4 12 10 / .55); }
+  .count-cell { padding: 0 calc(26 * var(--u)); gap: calc(8 * var(--u)); align-items: center; }
+  .count-cell:first-child { padding-left: calc(26 * var(--u)); }
+  .count-num { font-size: calc(46 * var(--u)); }
+  .count-unit { font-size: calc(11 * var(--u)); }
+  .count.is-done .count-in { font-size: calc(34 * var(--u)); }
+
+  /* sign-up card */
+  .card { right: calc(34 * var(--u)); bottom: calc(50 * var(--u)); width: calc(258 * var(--u)); padding: calc(22 * var(--u)); border-radius: calc(20 * var(--u)); }
+  .card .big { font-size: calc(42 * var(--u)); }
+  .card label { margin: calc(8 * var(--u)) 0 calc(14 * var(--u)); font-size: calc(15 * var(--u)); }
+  .row { gap: calc(8 * var(--u)); }
+  .row input { height: calc(40 * var(--u)); padding: 0 calc(14 * var(--u)); font-size: calc(13 * var(--u)); }
+  .send { width: calc(40 * var(--u)); height: calc(40 * var(--u)); }
+  .send svg { width: calc(16 * var(--u)); height: calc(16 * var(--u)); }
+  .note { margin-top: calc(8 * var(--u)); font-size: calc(11 * var(--u)); }
+}
+
+/* ==========================================================================
+   MACHINES: the construction vehicles at work
+   The vehicles were cut out of the photo (assets/site/*.png) and the ground
+   behind them was repainted in assets/bg.jpg, so each piece can move.
+   - Positions come from --x / --y / --w on each piece in index.html
+     (photo pixels on the 1672 x 941 image).
+   - Distances below are also photo pixels: "calc(34 * var(--s))" = 34px.
+   - Change a duration (the seconds) to make one machine faster or slower.
+   - To stop all of it, set --machines to paused.
+   ========================================================================== */
+:root { --machines: running; }   /* running or paused */
+.scene > * { --s: calc(100cqw / 1672); }   /* one photo pixel. Do not change. */
+.scene .m, .scene .dust {
+  position: absolute; left: calc(var(--x) * var(--s)); top: calc(var(--y) * var(--s)); width: calc(var(--w) * var(--s));
+  height: auto; max-width: none; pointer-events: none; animation-play-state: var(--machines);
+}
+
+/* wheel loader: drives forward, stops, reverses */
+.m-loader { animation: lp-loader 11s cubic-bezier(.45, 0, .55, 1) infinite; }
+@keyframes lp-loader {
+  0%, 8%   { transform: translateX(0); }
+  46%, 56% { transform: translateX(calc(34 * var(--s))); }
+  94%, 100% { transform: translateX(0); }
+}
+
+/* excavator: the lower arm and bucket swing from the elbow joint */
+.m-stick { transform-origin: 18.5% 21.5%; animation: lp-dig 6.5s cubic-bezier(.45, 0, .55, 1) infinite; }
+@keyframes lp-dig {
+  0%, 6%   { transform: rotate(0deg); }
+  30%, 36% { transform: rotate(-6deg); }      /* reach out */
+  62%, 70% { transform: rotate(5deg); }       /* pull the bucket through the mound */
+  100%     { transform: rotate(0deg); }
+}
+
+/* dump truck: the bed tips up, the soil slides out the back and piles up, the bed comes down.
+   One full cycle takes --tip-time. The pieces are layered: chassis, lifting ram, bed, soil, pile. */
+.m-tip { --tip-time: 18s; height: calc(76 * var(--s)); }
+.m-tip > * { position: absolute; left: calc(var(--x) * var(--s)); top: calc(var(--y) * var(--s)); width: calc(var(--w) * var(--s)); max-width: none; }
+.m-tip img { display: block; height: auto; max-width: none; }
+.t-bed img { width: 100%; }
+.m-tip, .m-tip * { animation-play-state: var(--machines); }
+.t-bed { transform-origin: 87.9% 73.8%; animation: lp-tip-bed var(--tip-time) linear infinite; }        /* hinge at the rear of the bed */
+.t-ram { height: calc(2.4 * var(--s)); width: calc(10.2 * var(--s)); border-radius: calc(1.2 * var(--s)); transform-origin: 0 50%; transform: rotate(-11.3deg);
+  background: linear-gradient(90deg, #2b2a28 0 38%, #a9a49b 38% 100%); animation: lp-tip-ram var(--tip-time) linear infinite; }
+.t-load { position: absolute; left: calc(16 * var(--s)); top: calc(-1 * var(--s)); width: calc(74 * var(--s)); height: calc(21 * var(--s));
+  clip-path: polygon(1.4% 4.8%, 63.5% -4.8%, 94.6% 28.6%, 94.6% 59.5%, 18.9% 90.5%, 1.4% 81%); }
+.t-load img { animation: lp-tip-load var(--tip-time) linear infinite; }
+.t-stream { height: calc(26 * var(--s)); opacity: 0; animation: lp-tip-stream var(--tip-time) linear infinite; }
+.t-stream i { position: absolute; left: 0; top: 0; width: calc(4 * var(--s)); height: calc(4 * var(--s)); border-radius: 50%; background: #6b4526; opacity: 0;
+  animation: lp-grain .62s linear infinite; }
+.t-stream i:nth-child(2) { animation-delay: -.13s; background: #7d5430; }
+.t-stream i:nth-child(3) { animation-delay: -.27s; left: calc(2 * var(--s)); }
+.t-stream i:nth-child(4) { animation-delay: -.4s; background: #8a5f38; }
+.t-stream i:nth-child(5) { animation-delay: -.52s; left: calc(3 * var(--s)); }
+.t-pile { height: auto; opacity: 0; transform-origin: 32% 86%; animation: lp-tip-pile var(--tip-time) linear infinite; }
+
+@keyframes lp-tip-bed {
+  0% { transform: rotate(0.00deg); }
+  6% { transform: rotate(0.00deg); }
+  7% { transform: rotate(0.23deg); }
+  8% { transform: rotate(0.90deg); }
+  9% { transform: rotate(1.94deg); }
+  10% { transform: rotate(3.33deg); }
+  11% { transform: rotate(5.00deg); }
+  12% { transform: rotate(6.91deg); }
+  13% { transform: rotate(9.02deg); }
+  14% { transform: rotate(11.26deg); }
+  15% { transform: rotate(13.61deg); }
+  16% { transform: rotate(16.00deg); }
+  17% { transform: rotate(18.39deg); }
+  18% { transform: rotate(20.74deg); }
+  19% { transform: rotate(22.98deg); }
+  20% { transform: rotate(25.09deg); }
+  21% { transform: rotate(27.00deg); }
+  22% { transform: rotate(28.67deg); }
+  23% { transform: rotate(30.06deg); }
+  24% { transform: rotate(31.10deg); }
+  25% { transform: rotate(31.77deg); }
+  26% { transform: rotate(32.00deg); }
+  60% { transform: rotate(32.00deg); }
+  61% { transform: rotate(31.71deg); }
+  62% { transform: rotate(30.90deg); }
+  63% { transform: rotate(29.63deg); }
+  64% { transform: rotate(27.96deg); }
+  65% { transform: rotate(25.96deg); }
+  66% { transform: rotate(23.70deg); }
+  67% { transform: rotate(21.25deg); }
+  68% { transform: rotate(18.66deg); }
+  69% { transform: rotate(16.00deg); }
+  70% { transform: rotate(13.34deg); }
+  71% { transform: rotate(10.75deg); }
+  72% { transform: rotate(8.30deg); }
+  73% { transform: rotate(6.04deg); }
+  74% { transform: rotate(4.04deg); }
+  75% { transform: rotate(2.37deg); }
+  76% { transform: rotate(1.10deg); }
+  77% { transform: rotate(0.29deg); }
+  78% { transform: rotate(0.00deg); }
+  100% { transform: rotate(0.00deg); }
+}
+@keyframes lp-tip-ram {
+  0% { width: calc(10.20 * var(--s)); transform: rotate(-11.31deg); }
+  6% { width: calc(10.20 * var(--s)); transform: rotate(-11.31deg); }
+  7% { width: calc(10.21 * var(--s)); transform: rotate(-12.10deg); }
+  8% { width: calc(10.27 * var(--s)); transform: rotate(-14.36deg); }
+  9% { width: calc(10.40 * var(--s)); transform: rotate(-17.85deg); }
+  10% { width: calc(10.65 * var(--s)); transform: rotate(-22.28deg); }
+  11% { width: calc(11.06 * var(--s)); transform: rotate(-27.26deg); }
+  12% { width: calc(11.64 * var(--s)); transform: rotate(-32.39deg); }
+  13% { width: calc(12.42 * var(--s)); transform: rotate(-37.29deg); }
+  14% { width: calc(13.38 * var(--s)); transform: rotate(-41.71deg); }
+  15% { width: calc(14.49 * var(--s)); transform: rotate(-45.49deg); }
+  16% { width: calc(15.71 * var(--s)); transform: rotate(-48.59deg); }
+  17% { width: calc(17.00 * var(--s)); transform: rotate(-51.06deg); }
+  18% { width: calc(18.31 * var(--s)); transform: rotate(-52.97deg); }
+  19% { width: calc(19.61 * var(--s)); transform: rotate(-54.41deg); }
+  20% { width: calc(20.84 * var(--s)); transform: rotate(-55.46deg); }
+  21% { width: calc(21.98 * var(--s)); transform: rotate(-56.21deg); }
+  22% { width: calc(22.99 * var(--s)); transform: rotate(-56.73deg); }
+  23% { width: calc(23.83 * var(--s)); transform: rotate(-57.07deg); }
+  24% { width: calc(24.47 * var(--s)); transform: rotate(-57.28deg); }
+  25% { width: calc(24.87 * var(--s)); transform: rotate(-57.40deg); }
+  26% { width: calc(25.01 * var(--s)); transform: rotate(-57.43deg); }
+  60% { width: calc(25.01 * var(--s)); transform: rotate(-57.43deg); }
+  61% { width: calc(24.84 * var(--s)); transform: rotate(-57.39deg); }
+  62% { width: calc(24.34 * var(--s)); transform: rotate(-57.24deg); }
+  63% { width: calc(23.57 * var(--s)); transform: rotate(-56.97deg); }
+  64% { width: calc(22.56 * var(--s)); transform: rotate(-56.52deg); }
+  65% { width: calc(21.37 * var(--s)); transform: rotate(-55.83deg); }
+  66% { width: calc(20.03 * var(--s)); transform: rotate(-54.80deg); }
+  67% { width: calc(18.60 * var(--s)); transform: rotate(-53.33deg); }
+  68% { width: calc(17.14 * var(--s)); transform: rotate(-51.30deg); }
+  69% { width: calc(15.71 * var(--s)); transform: rotate(-48.59deg); }
+  70% { width: calc(14.36 * var(--s)); transform: rotate(-45.10deg); }
+  71% { width: calc(13.16 * var(--s)); transform: rotate(-40.78deg); }
+  72% { width: calc(12.14 * var(--s)); transform: rotate(-35.70deg); }
+  73% { width: calc(11.36 * var(--s)); transform: rotate(-30.12deg); }
+  74% { width: calc(10.81 * var(--s)); transform: rotate(-24.45deg); }
+  75% { width: calc(10.47 * var(--s)); transform: rotate(-19.24deg); }
+  76% { width: calc(10.29 * var(--s)); transform: rotate(-15.04deg); }
+  77% { width: calc(10.22 * var(--s)); transform: rotate(-12.29deg); }
+  78% { width: calc(10.20 * var(--s)); transform: rotate(-11.31deg); }
+  100% { width: calc(10.20 * var(--s)); transform: rotate(-11.31deg); }
+}
+@keyframes lp-tip-load {
+  0%, 14%  { transform: translate(0, 0); opacity: 1; animation-timing-function: cubic-bezier(.5, 0, .85, .6); }
+  48%, 83% { transform: translate(calc(56 * var(--s)), calc(-5.4 * var(--s))); opacity: 1; }
+  84%      { transform: translate(calc(56 * var(--s)), calc(-5.4 * var(--s))); opacity: 0; }
+  85%      { transform: translate(0, 0); opacity: 0; }
+  96%, 100% { transform: translate(0, 0); opacity: 1; }
+}
+@keyframes lp-tip-stream { 0%, 16% { opacity: 0; } 19%, 46% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes lp-grain {
+  0%   { transform: translate(0, 0) scale(.7); opacity: 0; }
+  15%  { opacity: 1; }
+  100% { transform: translate(calc(9 * var(--s)), calc(15 * var(--s))) scale(1.2); opacity: .9; }
+}
+@keyframes lp-tip-pile {
+  0%, 18%  { opacity: 0; transform: scale(.2, .12); }
+  21%      { opacity: 1; transform: scale(.34, .25); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
+  50%, 85% { opacity: 1; transform: scale(1); }
+  95%, 100% { opacity: 0; transform: scale(1); }
+}
+
+/* crane: the hook sways on its cables and is slowly raised and lowered */
+.scene .m-rig { height: calc(96 * var(--s)); transform-origin: 46% 3%; animation: lp-sway 11s infinite; }
+.m-rig img { position: absolute; left: calc(var(--x) * var(--s)); top: calc(var(--y) * var(--s)); width: calc(var(--w) * var(--s)); height: auto; max-width: none; animation-play-state: var(--machines); }
+.m-cable { transform-origin: 50% 8%; animation: lp-cable 13s cubic-bezier(.45, 0, .55, 1) infinite; }
+.m-hook { animation: lp-hoist 13s cubic-bezier(.45, 0, .55, 1) infinite; }
+@keyframes lp-sway {
+  0%   { transform: rotate(0deg); animation-timing-function: ease-out; }
+  25%  { transform: rotate(1.7deg); animation-timing-function: ease-in-out; }
+  75%  { transform: rotate(-1.7deg); animation-timing-function: ease-in; }
+  100% { transform: rotate(0deg); }
+}
+@keyframes lp-hoist { 0%, 10% { transform: translateY(0); } 45%, 60% { transform: translateY(calc(-9 * var(--s))); } 95%, 100% { transform: translateY(0); } }
+@keyframes lp-cable { 0%, 10% { transform: scaleY(1); } 45%, 60% { transform: scaleY(.808); } 95%, 100% { transform: scaleY(1); } }
+
+/* TRAFFIC: each car slides from its start to its end and fades in and out at the two ends.
+   Speed = the --t seconds on each car in index.html (bigger is slower). */
+.car { --fy: 0; --ty: 0; --fs: 1; --ts: 1; --flip: 1; transform: scaleX(var(--flip)); animation: lp-drive var(--t) linear var(--d) infinite; }
+.car-gap { animation-name: lp-drive-gap; }      /* drives for half of its loop, then the road is empty for the other half */
+@keyframes lp-drive {
+  0%   { transform: translate(calc(var(--fx) * var(--s)), calc(var(--fy) * var(--s))) scale(calc(var(--fs) * var(--flip)), var(--fs)); opacity: 0; }
+  3%, 97% { opacity: 1; }
+  100% { transform: translate(calc(var(--tx) * var(--s)), calc(var(--ty) * var(--s))) scale(calc(var(--ts) * var(--flip)), var(--ts)); opacity: 0; }
+}
+@keyframes lp-drive-gap {
+  0%   { transform: translate(calc(var(--fx) * var(--s)), calc(var(--fy) * var(--s))) scale(calc(var(--fs) * var(--flip)), var(--fs)); opacity: 0; }
+  4%, 46% { opacity: 1; }
+  50%, 100% { transform: translate(calc(var(--tx) * var(--s)), calc(var(--ty) * var(--s))) scale(calc(var(--ts) * var(--flip)), var(--ts)); opacity: 0; }
+}
+
+/* dust: soft puffs timed to the machines */
+.scene .dust {
+  aspect-ratio: 1.5; border-radius: 50%; opacity: 0;
+  background: radial-gradient(closest-side, rgb(226 190 142 / .75), rgb(214 172 122 / .35) 55%, rgb(214 172 122 / 0));
+  filter: blur(calc(1.2 * var(--s)));
+}
+.dust-dig { animation: lp-dust-dig 6.5s ease-out infinite; }
+@keyframes lp-dust-dig {
+  0%, 40%  { opacity: 0; transform: translate(0, 0) scale(.4); }
+  52%      { opacity: .8; }
+  82%, 100% { opacity: 0; transform: translate(calc(-12 * var(--s)), calc(-14 * var(--s))) scale(1.9); }
+}
+.dust-loader { animation: lp-dust-loader 11s ease-out infinite; }
+@keyframes lp-dust-loader {
+  0%, 9%   { opacity: 0; transform: translate(0, 0) scale(.4); }
+  18%      { opacity: .65; transform: translate(calc(4 * var(--s)), calc(-3 * var(--s))) scale(1); }
+  44%, 100% { opacity: 0; transform: translate(calc(14 * var(--s)), calc(-10 * var(--s))) scale(2); }
+}
+
+.dust-truck { animation: lp-dust-truck 18s ease-out infinite; }
+@keyframes lp-dust-truck {
+  0%, 17%  { opacity: 0; transform: translate(0, 0) scale(.5); }
+  26%      { opacity: .75; transform: translate(calc(3 * var(--s)), calc(-3 * var(--s))) scale(1); }
+  44%      { opacity: .55; transform: translate(calc(8 * var(--s)), calc(-8 * var(--s))) scale(1.5); }
+  62%, 100% { opacity: 0; transform: translate(calc(16 * var(--s)), calc(-15 * var(--s))) scale(2.1); }
+}
+
+/* visitors who turn motion off see the machines standing still */
+@media (prefers-reduced-motion: reduce) { .scene .m, .scene .m * { animation: none; } .scene .dust { display: none; } }
+
+/* ==========================================================================
+   OPENING ANIMATION (plays once each time the page loads)
+   1. The screen starts dark and opens from the middle like a cinema screen,
+      stopping at a widescreen strip while the camera slowly pulls back and
+      the picture brightens.
+   2. The giant name rises letter by letter from behind a hidden line.
+   3. The dark bars slide away and the rest of the text follows.
+   - "--at" is when a piece starts, in seconds. Change a number to re-time it.
+   - "--bars" is how far in the dark bars reach during the widescreen moment;
+     "--feather" is how softly their edge fades into the picture.
+   - To turn the animation off, delete the small <script> in the <head> of
+     index.html.
+   ========================================================================== */
+:root {
+  --bars: 9.5%;              /* how far in the dark bars reach during the widescreen moment */
+  --feather: 5%;             /* softness of the bars' edge: 0.1% = hard line, 8% = very soft */
+  --zoom-from: 1.16;         /* how far the camera starts pushed in: 1 = no camera move */
+}
+.giant .w1 { --at: 1.0; }
+.giant .w2 { --at: 1.25; }
+.corner { --at: 2.1; }
+.nav    { --at: 2.6; }
+.tag    { --at: 2.7; }
+.cta    { --at: 3.1; }
+.facts  { --at: 3.2; }
+.count  { --at: 3.4; }
+.card   { --at: 3.3; }
+
+/* letters of the giant name (js/main.js wraps each letter in .ch) */
+.giant .ch { display: inline-block; position: static; }
+.giant .gl { clip-path: inset(-.3em -.3em .04em -.3em); }
+/* lines of the tagline (js/main.js wraps each line in .ln > span) */
+.tag .ln, .tag .ln > span { display: block; }
+.tag .ln { clip-path: inset(-.2em -.3em 0 -.3em); }
+
+/* before the animation starts: keep the pieces out of sight.
+   If the script never runs, they appear on their own after 3 seconds. */
+.intro-wait :is(.nav, .giant, .corner, .tag, .cta, .facts, .card, .count) { visibility: hidden; animation: lp-show 0s 3s forwards; }
+
+.intro-play .giant .ch {
+  animation: lp-rise calc(1.1s * var(--intro-speed)) cubic-bezier(.16, 1, .3, 1) both;
+  animation-delay: calc((var(--at) * 1s + var(--i) * 55ms) * var(--intro-speed));
+}
+.intro-play .tag .ln > span {
+  animation: lp-rise calc(.9s * var(--intro-speed)) cubic-bezier(.16, 1, .3, 1) both;
+  animation-delay: calc((var(--at) * 1s + var(--i) * 110ms) * var(--intro-speed));
+}
+.intro-play :is(.corner, .cta, .facts, .card, .count) {
+  animation: lp-fade-up calc(.9s * var(--intro-speed)) cubic-bezier(.16, 1, .3, 1) both;
+  animation-delay: calc(var(--at) * 1s * var(--intro-speed));
+}
+.intro-play .nav {
+  animation: lp-fade-down calc(.9s * var(--intro-speed)) cubic-bezier(.16, 1, .3, 1) both;
+  animation-delay: calc(var(--at) * 1s * var(--intro-speed));
+}
+
+/* the picture: slow pull-back and brightening (photo and pin move together) */
+.scene, .pin, .pin-top { transform-origin: 49.5% 56%; }
+.intro-wait :is(.scene, .pin) { transform: scale(var(--zoom-from)); filter: brightness(.3) saturate(.7); animation: lp-settle 0s 3s forwards; }
+.intro-play :is(.scene, .pin) {
+  animation: lp-pullback calc(4.4s * var(--intro-speed)) cubic-bezier(.22, .61, .36, 1) both,
+             lp-brighten calc(2.4s * var(--intro-speed)) cubic-bezier(.4, 0, .2, 1) both;
+  animation-delay: calc(.15s * var(--intro-speed));
+}
+
+/* the dark bars, with soft (faded) edges. Phones: the photo block opens.
+   Wider screens: the whole frame opens. "--cut" is how far in from the top and
+   bottom the picture is hidden; the edge fades over "--feather" either side. */
+@property --cut { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+.intro-wait .photo, .intro-play .photo, .intro-wait .frame, .intro-play .frame {
+  --fade-a: calc(var(--cut) - var(--feather));
+  --fade-b: calc(var(--cut) + var(--feather));
+}
+@media (max-width: 640px) {
+  .intro-wait .photo, .intro-play .photo {
+    -webkit-mask-image: linear-gradient(to bottom, transparent var(--fade-a), #000 var(--fade-b)), linear-gradient(to top, transparent var(--fade-a), #000 var(--fade-b));
+            mask-image: linear-gradient(to bottom, transparent var(--fade-a), #000 var(--fade-b)), linear-gradient(to top, transparent var(--fade-a), #000 var(--fade-b));
+    -webkit-mask-composite: source-in; mask-composite: intersect;
+  }
+  .intro-wait .photo { --cut: calc(50% + var(--feather)); animation: lp-unclip 0s 3s forwards; }
+  .intro-play .photo { animation: lp-open calc(1.8s * var(--intro-speed)) cubic-bezier(.76, 0, .24, 1) calc(.15s * var(--intro-speed)) both; }
+}
+@media (min-width: 641px) {
+  .intro-wait .frame, .intro-play .frame {
+    -webkit-mask-image: linear-gradient(to bottom, transparent var(--fade-a), #000 var(--fade-b)), linear-gradient(to top, transparent var(--fade-a), #000 var(--fade-b));
+            mask-image: linear-gradient(to bottom, transparent var(--fade-a), #000 var(--fade-b)), linear-gradient(to top, transparent var(--fade-a), #000 var(--fade-b));
+    -webkit-mask-composite: source-in; mask-composite: intersect;
+  }
+  .intro-wait .frame { --cut: calc(50% + var(--feather)); animation: lp-unclip 0s 3s forwards; }
+  .intro-play .frame { animation: lp-aperture calc(3.2s * var(--intro-speed)) calc(.15s * var(--intro-speed)) both; }
+}
+
+@keyframes lp-pullback { from { transform: scale(var(--zoom-from)); } to { transform: none; } }
+@keyframes lp-brighten { from { filter: brightness(.3) saturate(.7); } to { filter: none; } }
+@keyframes lp-settle { to { transform: none; filter: none; translate: none; opacity: 1; } }
+@keyframes lp-unclip { to { --cut: calc(0% - var(--feather)); } }
+@keyframes lp-open { from { --cut: calc(50% + var(--feather)); } to { --cut: calc(0% - var(--feather)); } }
+@keyframes lp-aperture {
+  0%   { --cut: calc(50% + var(--feather)); animation-timing-function: cubic-bezier(.76, 0, .24, 1); }
+  44%  { --cut: calc(var(--bars) - var(--feather)); }
+  70%  { --cut: calc(var(--bars) - var(--feather)); animation-timing-function: cubic-bezier(.76, 0, .24, 1); }
+  100% { --cut: calc(0% - var(--feather)); }
+}
+@keyframes lp-show { to { visibility: visible; } }
+@keyframes lp-rise { from { transform: translateY(110%); } to { transform: none; } }
+@keyframes lp-fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes lp-fade-down { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
+
+/* ==========================================================================
+   PIN DROP (plays once, during the opening animation; it does not loop)
+   The pin is not part of the photo. It falls in from above, lands with a small
+   squash and a puff of dust, its shadow slides in under it, and two thin rings
+   spread over the ground from its tip.
+   "--pin-at" is when the pin starts to fall, in seconds. Visitors with motion
+   turned off simply see the pin standing in place.
+   ========================================================================== */
+:root { --pin-at: 2.15; }
+.scene .pin-top { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; pointer-events: none; }
+
+/* before the animation starts the pin waits above the picture and its shadow is hidden */
+.intro-wait :is(.pin, .pin-top) { translate: 0 -75%; }
+.intro-wait .pin-top { animation: lp-settle 0s 3s forwards; }
+.intro-wait .pin-shadow { opacity: 0; animation: lp-settle 0s 3s forwards; }
+
+/* the fall. The desktop pin also keeps the camera pull-back and brightening from the opening animation. */
+.intro-play .pin {
+  animation: lp-pullback calc(4.4s * var(--intro-speed)) cubic-bezier(.22, .61, .36, 1) calc(.15s * var(--intro-speed)) both,
+             lp-brighten calc(2.4s * var(--intro-speed)) cubic-bezier(.4, 0, .2, 1) calc(.15s * var(--intro-speed)) both,
+             lp-pin-drop calc(.85s * var(--intro-speed)) linear calc(var(--pin-at) * 1s * var(--intro-speed)) both;
+}
+.intro-play .pin-top { animation: lp-pin-drop calc(.85s * var(--intro-speed)) linear calc(var(--pin-at) * 1s * var(--intro-speed)) both; }
+@keyframes lp-pin-drop {
+  0%   { translate: 0 -75%; scale: 1; animation-timing-function: cubic-bezier(.55, .05, .9, .5); }   /* speeding up as it falls */
+  58%  { translate: 0 0; scale: 1; animation-timing-function: ease-out; }                             /* touches down */
+  68%  { translate: 0 0; scale: 1.03 .962; animation-timing-function: ease-in-out; }                  /* small squash */
+  84%  { translate: 0 -.5%; scale: .992 1.01; animation-timing-function: ease-in-out; }               /* tiny rebound */
+  100% { translate: 0 0; scale: 1; }
+}
+
+/* the shadow slides in from the right and darkens as the pin comes down */
+.intro-play .pin-shadow { animation: lp-pin-shadow calc(.5s * var(--intro-speed)) cubic-bezier(.5, 0, .8, .6) calc((var(--pin-at) + .06) * 1s * var(--intro-speed)) both; }
+@keyframes lp-pin-shadow {
+  from { opacity: 0; transform: translate(calc(70 * var(--s)), calc(6 * var(--s))) scale(.82); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* dust kicked out to both sides on landing */
+.intro-play .pin-dust { animation: lp-pin-dust-l calc(1.2s * var(--intro-speed)) ease-out calc((var(--pin-at) + .49) * 1s * var(--intro-speed)) both; }
+.intro-play .pin-dust-r { animation-name: lp-pin-dust-r; }
+@keyframes lp-pin-dust-l {
+  0%   { opacity: 0; transform: translate(0, 0) scale(.4); }
+  18%  { opacity: .9; }
+  100% { opacity: 0; transform: translate(calc(-34 * var(--s)), calc(-9 * var(--s))) scale(2.3); }
+}
+@keyframes lp-pin-dust-r {
+  0%   { opacity: 0; transform: translate(0, 0) scale(.4); }
+  18%  { opacity: .9; }
+  100% { opacity: 0; transform: translate(calc(40 * var(--s)), calc(-7 * var(--s))) scale(2.5); }
+}
+
+/* the rings: flat ovals on the ground (wider than tall, because the ground is seen at an angle) */
+.scene .pin-ring {
+  position: absolute; left: calc(var(--x) * var(--s)); top: calc(var(--y) * var(--s)); translate: -50% -50%; pointer-events: none;
+  width: calc(36 * var(--s)); aspect-ratio: 1 / .36; border-radius: 50%; opacity: 0;
+  border: calc(1.6 * var(--s)) solid rgb(255 244 226 / .9); box-shadow: 0 0 calc(10 * var(--s)) rgb(255 214 150 / .45), inset 0 0 calc(8 * var(--s)) rgb(255 214 150 / .25);
+}
+.intro-play .pin-ring { animation: lp-pin-ring calc(2.6s * var(--intro-speed)) cubic-bezier(.16, .7, .3, 1) calc((var(--pin-at) + .5) * 1s * var(--intro-speed)) both; }
+.intro-play .pin-ring-2 { animation-delay: calc((var(--pin-at) + 1.1) * 1s * var(--intro-speed)); }
+@keyframes lp-pin-ring {
+  0%   { width: calc(36 * var(--s)); opacity: 0; }
+  10%  { opacity: .9; }
+  100% { width: calc(600 * var(--s)); opacity: 0; }
+}
+
+/* ==========================================================================
+   HERO FILL: the photo keeps its 16:9 shape, so a window taller than that
+   would show the next section under it. Instead the hero always fills the
+   screen, and the space under the photo shows the lake continuing (the photo
+   mirrored at its bottom edge, fading into the dark page colour).
+   ========================================================================== */
+.hero-water { display: none; }
+@media (min-width: 641px) {
+  .hero { display: flex; flex-direction: column; min-height: 100vh; min-height: 100svh; background: var(--ink); }
+  .frame { flex: none; }
+  .hero-water { display: block; flex: 1 0 0; position: relative; overflow: hidden; }
+  .hero-water > div { position: absolute; left: 0; top: 0; width: 100%; aspect-ratio: 1672 / 941; transform: scaleY(-1); background: url("../assets/bg.jpg") center / 100% 100% no-repeat; }
+  .hero-water > div::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 62% 70% at 49.5% 54%,
+      rgb(4 12 10 / 0) 0%, rgb(4 12 10 / 0) var(--vignette-clear),
+      rgb(4 12 10 / calc(var(--vignette) * .16)) 58%, rgb(4 12 10 / calc(var(--vignette) * .42)) 72%,
+      rgb(4 12 10 / calc(var(--vignette) * .71)) 86%, rgb(4 12 10 / var(--vignette)) 100%);
+  }
+  .hero-water::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgb(11 31 25 / 0), rgb(11 31 25 / .6) 56px, var(--ink) 150px); }
+  .intro-wait .hero-water { opacity: 0; animation: lp-settle 0s 3s forwards; }
+  .intro-play .hero-water { animation: lp-water calc(1s * var(--intro-speed)) calc(2.7s * var(--intro-speed)) both; }
+}
+@keyframes lp-water { from { opacity: 0; } to { opacity: 1; } }
+
+/* ==========================================================================
+   ABOUT SECTION (below the hero): a light, editorial block.
+   Small label top left, round button top right, one big statement with
+   italic serif words, a round seal, a short paragraph and a round button
+   bottom left.
+   On wide screens the pieces sit on a 12-column grid; "grid-column: 4 / 13"
+   means "from column 4 to the right edge". On phones they stack.
+   The pieces rise into place once, the first time the section scrolls into
+   view (js/main.js adds "is-waiting" and removes it).
+   ========================================================================== */
+@font-face { font-family: "LP Serif"; font-style: italic; font-weight: 400; font-display: swap; src: url("../assets/fonts/InstrumentSerif-Italic.woff2") format("woff2"); }
+html { scroll-behavior: smooth; }
+.about {
+  --line: rgb(11 31 25 / .16);
+  position: relative; overflow: hidden; display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 26px 16px;
+  padding: 22px 16px 28px; background: var(--ivory); color: var(--ink); color-scheme: light;
+}
+.about em { font-family: "LP Serif", Georgia, "Times New Roman", serif; font-style: italic; font-weight: 400; }
+.about :focus-visible { outline-color: var(--emerald); }
+
+.about-btn { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); color: var(--ink); transition: background .25s, color .25s, border-color .25s; }
+.about-btn svg { width: 14px; height: 14px; }
+.about-up svg { rotate: -90deg; }
+.about-btn:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+.about-statement { grid-column: 1 / -1; grid-row: 1; margin: 14px 0 0; font-family: var(--body); font-weight: 400; font-size: clamp(30px, 8.6vw, 44px); line-height: 1.08; letter-spacing: -.04em; }
+.about-statement em { font-size: 1.09em; letter-spacing: -.02em; }
+.about-statement br { display: none; }
+
+.about-seal { grid-column: 2; grid-row: 2; width: 84px; height: 84px; align-self: start; }
+.about-seal-text { transform-origin: 60px 60px; animation: lp-seal 26s linear infinite; }
+.about-seal text { font: 600 9.4px var(--body); letter-spacing: .16em; fill: currentColor; }
+.about-seal-mark { fill: none; stroke: currentColor; stroke-width: 1.3; }
+@keyframes lp-seal { to { transform: rotate(360deg); } }
+
+.about-body { grid-column: 1; grid-row: 2; max-width: 30em; font-size: 14px; line-height: 1.55; }
+.about-stars { display: none; }
+
+.about-up { grid-column: 1; grid-row: 3; }
+
+@media (min-width: 900px) {
+  .about { grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: auto auto 1fr; gap: 0 1.6vw; padding: 2vw 2.2vw 2.2vw; min-height: 40vw; }
+
+  .about-btn { width: clamp(34px, 2.5vw, 44px); height: clamp(34px, 2.5vw, 44px); }
+
+  .about-statement { grid-column: 4 / 13; grid-row: 2; margin: 5.2vw 0 0; font-size: clamp(30px, 3.62vw, 74px); line-height: 1.12; white-space: nowrap; }
+  .about-statement br { display: inline; }
+
+  .about-seal { grid-column: 2 / 4; grid-row: 3; justify-self: center; align-self: start; margin-top: 1.2vw; width: clamp(84px, 7.2vw, 132px); height: auto; }
+  .about-body { grid-column: 5 / 8; grid-row: 3; align-self: start; margin-top: 7.2vw; max-width: none; font-size: clamp(13px, .98vw, 18px); line-height: 1.6; text-align: justify; hyphens: auto; position: relative; }
+  .about-stars { display: block; grid-column: 8 / 10; grid-row: 3; align-self: start; margin-top: 7.2vw; padding-left: 1.4vw; font-size: clamp(14px, 1.1vw, 20px); letter-spacing: .12em; }
+  .about-up { grid-column: 1; grid-row: 3; align-self: end; }
+}
+
+/* TRUST STRIP: the moving row of badges and logos at the bottom of the section.
+   - Speed: --trust-time is how long one full row takes to pass (bigger is slower).
+   - Real logos (<img>) are shown --trust-logo tall, in their own colours.
+   - It pauses while the pointer is over it, and stands still for visitors who turn motion off. */
+.about { --pad: 16px; --trust-time: 38s; --trust-logo: 44px; }
+.trust { grid-column: 1 / -1; grid-row: 4; margin: 8px calc(-1 * var(--pad)) 0; overflow: hidden; }
+.trust-track { display: flex; width: max-content; margin: 0; padding: 0; list-style: none; }
+.trust { position: relative; }
+/* soft fade at both ends of the moving row */
+.trust.is-moving::before, .trust.is-moving::after { content: ""; position: absolute; z-index: 1; bottom: 0; width: 7%; height: 100%; pointer-events: none; }
+.trust.is-moving::before { left: 0; background: linear-gradient(90deg, var(--ivory), rgb(243 233 218 / 0)); }
+.trust.is-moving::after { right: 0; background: linear-gradient(270deg, var(--ivory), rgb(243 233 218 / 0)); }
+.trust.is-moving .trust-track { animation: lp-trust var(--trust-time) linear infinite; }
+.trust.is-moving:hover .trust-track { animation-play-state: paused; }
+@keyframes lp-trust { to { transform: translateX(calc(-1 * var(--trust-shift, 50%))); } }
+.trust-item { flex: none; display: flex; align-items: center; gap: 12px; height: 64px; margin-right: 14px; padding: 0 26px; white-space: nowrap; font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.trust-item svg { flex: none; width: 24px; height: 24px; }
+.trust-item img { display: block; height: var(--trust-logo); width: auto; max-width: calc(var(--trust-logo) * 5.3); object-fit: contain; }
+.trust-item.is-placeholder { border-style: dashed; border-color: rgb(11 31 25 / .34); color: rgb(11 31 25 / .62); }
+@media (min-width: 900px) {
+  .about { --pad: 2.2vw; --trust-logo: clamp(44px, 3.4vw, 62px); }
+  .trust { grid-row: 4; margin-top: 3.4vw; }
+  .trust-item { height: clamp(64px, 5vw, 88px); padding: 0 clamp(26px, 2.2vw, 40px); margin-right: clamp(14px, 1.1vw, 20px); font-size: clamp(12px, .86vw, 15px); }
+}
+@media (prefers-reduced-motion: reduce) { .trust-track { flex-wrap: wrap; width: auto; gap: 12px 0; padding: 0 var(--pad); } }
+
+/* the one-time rise into view */
+.about > * { transition: opacity .9s cubic-bezier(.16, 1, .3, 1), translate .9s cubic-bezier(.16, 1, .3, 1), clip-path 1.2s cubic-bezier(.76, 0, .24, 1); }
+.about-statement { transition-delay: .08s; }
+.about-seal { transition-delay: .3s; }
+.about-body, .about-stars { transition-delay: .38s; }
+.about.is-waiting > * { opacity: 0; translate: 0 26px; }
+@media (prefers-reduced-motion: reduce) { .about-seal-text { animation: none; } }
+
+/* ==========================================================================
+   OWNERSHIP OFFER (between the number strip and the area facts): a headline,
+   one line and a button, above a picture of hands passing a document over a field. The sky is transparent, so the light page
+   colour shows behind; the foot of the grass fades into the dark section below.
+   ========================================================================== */
+.deed { position: relative; overflow: hidden; background: var(--ivory); color: var(--ink); color-scheme: light; }
+.deed em { font-family: "LP Serif", Georgia, "Times New Roman", serif; font-style: italic; font-weight: 400; font-size: 1.09em; letter-spacing: -.02em; }
+/* the headline is the back layer: the picture (next rule) is drawn over it */
+.deed-title { position: relative; z-index: 0; margin: 0; padding: 48px 12px 0; text-align: center; font-family: var(--body); font-weight: 400; font-size: 11.6vw; line-height: 1; letter-spacing: -.045em; }
+.deed-price { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.deed-scene { --hands: running; --hand-reach: 1.9%; --hand-time: 7s; position: relative; z-index: 1; width: 150%; aspect-ratio: 1672 / 701; margin: -12.5vw 0 0 -25%; pointer-events: none; }
+.deed-scene img { position: absolute; top: 0; height: 100%; max-width: none; display: block; }
+.deed-field { left: 0; width: 100%; }
+/* each hand picture carries 60px of extra sleeve / arm beyond the edge, so a small swing never opens a gap there */
+.deed-hand { width: calc(100% * 1732 / 1672); }
+.deed-hand-l { left: calc(-100% * 60 / 1672); transform-origin: 0% 45%; }
+.deed-hand-r { left: 0; transform-origin: 100% 55%; }
+/* 1. once, when the section comes into view: each hand starts drawn back a little and reaches in.
+   2. after that: a slow, small sway, as if the hands were being held out. "--hands: paused" stops the sway. */
+.deed-hand { transition: translate 1.8s cubic-bezier(.22, .8, .25, 1) .15s, rotate 1.8s cubic-bezier(.22, .8, .25, 1) .15s; animation: lp-hand-l var(--hand-time) ease-in-out 2s infinite alternate; animation-play-state: var(--hands); }
+.deed-hand-r { animation-name: lp-hand-r; animation-duration: calc(var(--hand-time) * 1.18); }
+.deed.is-waiting .deed-hand { animation-play-state: paused; }
+.deed.is-waiting .deed-hand-l { translate: calc(var(--hand-reach) * -1) 0; rotate: -1.6deg; }
+.deed.is-waiting .deed-hand-r { translate: var(--hand-reach) 0; rotate: 1.4deg; }
+@keyframes lp-hand-l { from { transform: rotate(0deg) translateX(0); } to { transform: rotate(.55deg) translateX(-.25%); } }
+@keyframes lp-hand-r { from { transform: rotate(0deg) translateX(0); } to { transform: rotate(-.5deg) translateX(.22%); } }
+@media (prefers-reduced-motion: reduce) { .deed-hand { animation: none; transition: none; } }
+.deed::after { content: ""; position: absolute; z-index: 1; inset: auto 0 0 0; height: 46%; background: linear-gradient(to bottom, rgb(2 45 30 / 0), var(--emerald-dark) 52%); pointer-events: none; }
+.deed-foot { position: relative; z-index: 2; margin-top: -14vw; padding: 0 16px 34px; text-align: center; color: var(--paper); }
+.deed-line { margin: 0 auto; max-width: 30em; font-size: 15px; line-height: 1.5; color: rgb(251 248 241 / .86); }
+.deed-btn { display: inline-flex; align-items: center; gap: 12px; margin-top: 0; height: 48px; padding: 0 22px; border-radius: 999px; background: var(--paper); color: var(--ink); font-size: 14px; font-weight: 500; text-decoration: none; transition: background .25s; }
+.deed-btn span { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.deed-btn:hover { background: var(--gold); }
+@media (max-width: 899px) {
+  /* small screens: the foot of the picture melts into the dark colour, and the button sits on that dark */
+  .deed::after { display: none; }
+  .deed-scene::after { content: ""; position: absolute; z-index: 2; inset: 0 0 -1px 0; background: linear-gradient(to bottom, rgb(2 45 30 / 0) 62%, var(--emerald-dark) 98%); }
+  .deed-foot { padding-top: 14vw; margin-top: -28vw; background: linear-gradient(to bottom, rgb(2 45 30 / 0), var(--emerald-dark) 14vw); }
+}
+@media (min-width: 900px) {
+  .deed-br { display: none; }
+  .deed-title { padding: 5vw 1vw 0; font-size: 7vw; }
+  .deed-scene { width: 100%; margin: -9.5vw 0 0; }
+  .deed::after { height: 30%; background: linear-gradient(to bottom, rgb(2 45 30 / 0), var(--emerald-dark)); }
+  .deed-foot { position: absolute; inset: auto 0 0 0; margin: 0; padding: 0 2.2vw 3.2vw; }
+  .deed-line { font-size: clamp(14px, 1.05vw, 19px); }
+}
+/* the one-time rise into view */
+.deed-title, .deed-foot > * { transition: opacity .9s cubic-bezier(.16, 1, .3, 1), translate .9s cubic-bezier(.16, 1, .3, 1); }
+.deed-line { transition-delay: .2s; } .deed-btn { transition-delay: .28s; }
+.deed.is-waiting :is(.deed-title, .deed-foot > *) { opacity: 0; translate: 0 26px; }
+/* the same kind of opening as the hero, played once when the section is first seen:
+   the picture pulls back, the headline rises letter by letter, the hands reach in, then the button follows.
+   "--deed-speed" slows (2) or speeds up (.5) the whole thing. */
+.deed { --deed-speed: 1; }
+.deed-title .dw { display: inline-block; white-space: nowrap; clip-path: inset(-.12em -.25em -.24em -.25em); }
+.deed-title .dc { display: inline-block; transition: transform calc(1.1s * var(--deed-speed)) cubic-bezier(.16, 1, .3, 1); transition-delay: calc((.25s + var(--i) * 30ms) * var(--deed-speed)); }
+.deed.is-waiting .deed-title .dc { transform: translateY(130%); }
+.deed.is-waiting .deed-title.is-split { opacity: 1; translate: none; }
+.deed-scene { transform-origin: 50% 100%; transition: scale calc(3.2s * var(--deed-speed)) cubic-bezier(.22, .61, .36, 1), filter calc(2.2s * var(--deed-speed)) cubic-bezier(.4, 0, .2, 1); }
+.deed.is-waiting .deed-scene { scale: 1.07; filter: brightness(.82) saturate(.8); }
+.deed-hand { transition-delay: calc(.7s * var(--deed-speed)); }
+.deed-btn { transition-delay: calc(1.7s * var(--deed-speed)); }
+@media (prefers-reduced-motion: reduce) { .deed-scene, .deed-title .dc { transition: none; } }
+
+/* ==========================================================================
+   NUMBER STRIP (after the ownership offer, before the gallery): four big
+   numbers in one row on the dark emerald, with no dividing lines.
+   Two by two on phones.
+   ========================================================================== */
+.stats { --pad: 16px; padding: 8px var(--pad) 48px; background: transparent; color: var(--paper); }
+.stats-row { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; }
+.stat { position: relative; padding: 24px 12px 22px 0; }
+.stat:nth-child(even) { padding-left: 18px; }
+.stat-num { margin: 0; font-family: var(--body); font-weight: 400; font-size: clamp(46px, 14vw, 68px); line-height: 1; letter-spacing: -.055em; font-variant-numeric: tabular-nums; }
+.stat-label { margin: 12px 0 0; font-size: 10.5px; font-weight: 500; line-height: 1.35; letter-spacing: .08em; text-transform: uppercase; color: rgb(251 248 241 / .7); }
+@media (min-width: 900px) {
+  .stats { --pad: 2.2vw; padding: 1vw var(--pad) 5.5vw; }
+  .stats-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .stat { padding: 2.6vw 1vw 2.4vw 2.6vw; }
+  .stat:nth-child(even) { padding-left: 2.6vw; }
+  .stat:first-child { padding-left: 0; }
+  .stat-num { font-size: clamp(54px, 6vw, 128px); }
+  .stat-label { margin-top: 1.1vw; font-size: clamp(10px, .78vw, 14px); }
+}
+.stat { transition: opacity .9s cubic-bezier(.16, 1, .3, 1), translate .9s cubic-bezier(.16, 1, .3, 1); }
+.stat:nth-child(2) { transition-delay: .08s; } .stat:nth-child(3) { transition-delay: .16s; } .stat:nth-child(4) { transition-delay: .24s; }
+.stats.is-waiting .stat { opacity: 0; translate: 0 26px; }
+
+/* ==========================================================================
+   GALLERY (after the number strip): upright pictures on a curved wall, seen from
+   inside the curve, so the middle picture is smallest and the ones at the
+   sides lean in and grow. js/main.js places the pictures and turns the wall;
+   without it the pictures sit in a row you can swipe sideways.
+   "--arc-speed" is how fast the wall turns, in degrees a second (0 = still,
+   a minus number turns it the other way).
+   ========================================================================== */
+.gallery { --pad: 16px; --arc-speed: 5; --arc-blur: 9px; --pixels: 62; --pixel-blur: 5px; padding: 66px 0 56px; background: transparent; color: var(--paper); overflow: hidden; }
+.gallery-title { margin: 0; padding: 0 var(--pad); font-family: var(--body); font-weight: 400; font-size: clamp(34px, 9.6vw, 48px); line-height: 1.05; letter-spacing: -.04em; }
+.gallery-title em { font-family: "LP Serif", Georgia, "Times New Roman", serif; font-style: italic; font-weight: 400; font-size: 1.09em; letter-spacing: -.02em; color: var(--gold); }
+.arc { display: flex; gap: 12px; margin: 28px 0 0; padding: 0 var(--pad); list-style: none; overflow-x: auto; scrollbar-width: none; }
+.arc::-webkit-scrollbar { display: none; }
+.arc-card { flex: none; width: 56vw; max-width: 300px; aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden; background: rgb(251 248 241 / .06); }
+.arc-card img { display: block; width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; }
+/* Until launch the gallery is blurred and pixelated together: a soft blur first, then a fine grid of
+   small square "pixels" over it, so it reads as a blur with a pixel texture rather than big blocks.
+   js/main.js builds the grid. "--pixel-blur" is how soft the blur is; "--pixels" is how many squares
+   cross the screen (more = smaller squares; 0 switches the grid off and shows the pictures sharp).
+   If the grid cannot be built, the gallery falls back to a plain blur of "--arc-blur". */
+.arc-glass { position: relative; z-index: 1; margin: 0; transition: opacity .9s cubic-bezier(.16, 1, .3, 1) .12s, translate .9s cubic-bezier(.16, 1, .3, 1) .12s; }
+.arc-glass .arc { margin: 0; }
+.arc { filter: blur(var(--arc-blur)); }
+.arc.is-fluted { filter: blur(var(--pixel-blur)) url(#lp-flute); }
+/* the curved wall (js/main.js adds "is-3d" and sets --arc-w / --arc-h / the height) */
+.arc.is-3d { display: block; position: relative; padding: 0; overflow: hidden; cursor: grab; touch-action: pan-y; }
+.arc.is-3d.is-held { cursor: grabbing; }
+.arc.is-3d .arc-card { position: absolute; left: 50%; top: 50%; width: var(--arc-w); height: var(--arc-h); max-width: none; aspect-ratio: auto; margin: calc(var(--arc-h) / -2) 0 0 calc(var(--arc-w) / -2); border-radius: calc(var(--arc-w) * .06); backface-visibility: hidden; will-change: transform; }
+@media (min-width: 900px) {
+  .gallery { --pad: 2.2vw; --arc-blur: .95vw; --pixels: 170; --pixel-blur: .5vw; padding: 9vw 0 6vw; }
+  .gallery-title { font-size: clamp(44px, 5vw, 104px); }
+}
+.gallery-title { transition: opacity .9s cubic-bezier(.16, 1, .3, 1), translate .9s cubic-bezier(.16, 1, .3, 1); }
+/* the words over the gallery: centred on the blurred pictures, with nothing behind them (no shadow or dark
+   patch). They let clicks and drags through, so the wall can still be turned. */
+.gallery-note { position: absolute; z-index: 2; inset: 0; display: grid; place-content: center; justify-items: center; padding: 0 20px; text-align: center; pointer-events: none; }
+.gallery-note-title { margin: 0; font-family: var(--body); font-weight: 400; font-size: clamp(26px, 7.4vw, 40px); line-height: 1.06; letter-spacing: -.04em; }
+.gallery-note-title em { display: block; font-family: "LP Serif", Georgia, "Times New Roman", serif; font-style: italic; font-weight: 400; font-size: 1.09em; letter-spacing: -.02em; color: #FFD66B; }
+.gallery-note-line { margin: 12px 0 0; max-width: 30em; font-size: 13px; line-height: 1.5; color: rgb(251 248 241 / .82); }
+@media (min-width: 900px) {
+  .gallery-note-title { font-size: clamp(40px, 4.4vw, 92px); }
+  .gallery-note-title em { display: inline; }
+  .gallery-note-line { margin-top: 1.2vw; font-size: clamp(14px, 1.05vw, 19px); }
+}
+.arc { transition-delay: .12s; }
+.gallery.is-waiting :is(.gallery-title, .arc-glass) { opacity: 0; translate: 0 26px; }
+
+/* the number strip and the gallery share one dark background */
+.dark-zone { position: relative; overflow: hidden; }
+
+/* ==========================================================================
+   GRAIN AND GOLD PATTERN ON THE GREEN: over the dark emerald lie a fine film
+   grain and, on top of it, a faint pattern of thin gold lines (squares with
+   arcs, leaves and arches: assets/pattern-gold.svg, drawn by
+   assets/source/pattern-gold.py). The grain is like the grain
+   in the hero photo, on every green area (number strip, gallery, closing
+   section). It is part of the background, so it lies behind the numbers,
+   pictures and door, not over them.
+   The grain is a small picture, assets/grain-emerald.webp, made of the exact
+   emerald with light and dark speckles that average back to that colour, so
+   the green does not change shade and joins the plain green above it without
+   a line. "--grain-size" is how fine it is (smaller = finer). To switch the
+   grain off, change "--grain-on" to "none".
+   ========================================================================== */
+:root { --grain-size: 160px; --grain-on: none;   /* the grain in the green background is off: the grain laid over everything (below) covers the green too */
+  /* the gold line pattern over the grain: "--pattern-size" is the size of one repeat (6 squares across);
+     change "--pattern-on" to "none" to switch it off */
+  --pattern-size: 660px; --pattern-on: url("../assets/pattern-gold.svg"); }
+/* "--pattern-y" is set by js/main.js on the closing section, so its pattern carries on exactly where the pattern above it stops */
+.dark-zone, .door { background: var(--pattern-on) 50% var(--pattern-y, 0px) / var(--pattern-size) var(--pattern-size) repeat, var(--grain-on) 0 0 / var(--grain-size) var(--grain-size) repeat, var(--emerald-dark); }
+@media (max-width: 899px) { :root { --pattern-size: 420px; } }
+/* ---- GOLD PATTERN DRAWS -----------------------------------------------------------------------------------
+   js/main.js lays the pattern over each green area as real lines (".gold-pattern"). Each line starts undrawn
+   and is traced when the area is first seen. "--draw-time" is how long one line takes; "--draw-step" is the
+   pause between one line starting and the next (the lines sweep down and across each repeat). */
+.gold-pattern { --draw-time: 1.5s; --draw-step: .34s; position: absolute; left: 0; top: 0; pointer-events: none; overflow: hidden; }
+.gold-pattern path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset var(--draw-time) cubic-bezier(.45, 0, .2, 1) calc(var(--n, 0) * var(--draw-step)); }
+.gold-pattern.is-drawn path { stroke-dashoffset: 0; }
+.gold-pattern.is-still path { transition: none; }
+/* number strip + gallery: behind the numbers and pictures, fading in from the top like the grain */
+.dark-zone > .gold-pattern { z-index: 0;
+  --fade: linear-gradient(to bottom, transparent 0, rgb(0 0 0 / .14) 22%, rgb(0 0 0 / .55) 58%, #000 100%); --rest: linear-gradient(#000, #000);
+  -webkit-mask: var(--fade) 0 0 / 100% var(--grain-fade) no-repeat, var(--rest) 0 100% / 100% calc(100% - var(--grain-fade)) no-repeat;
+          mask: var(--fade) 0 0 / 100% var(--grain-fade) no-repeat, var(--rest) 0 100% / 100% calc(100% - var(--grain-fade)) no-repeat; }
+/* closing section: on its green background but behind its picture, exactly where the still pattern was */
+.door { isolation: isolate; }
+.door > .gold-pattern { z-index: -1; }
+
+/* the grain comes in gradually at the top of the green area: plain emerald at the very top (matching the plain
+   green that the grass fades into), melting into the grain below it. "--grain-fade" is how tall that melt is. */
+.dark-zone { --grain-fade: 240px; }
+.dark-zone::before { content: ""; position: absolute; z-index: 0; inset: 0 0 auto 0; height: var(--grain-fade); pointer-events: none;
+  background: linear-gradient(to bottom, var(--emerald-dark) 0, rgb(2 45 30 / .86) 22%, rgb(2 45 30 / .45) 58%, rgb(2 45 30 / 0) 100%); }
+.dark-zone > section { position: relative; z-index: 1; }
+@media (min-width: 900px) { .dark-zone { --grain-fade: 22vw; } }
+
+/* ==========================================================================
+   REELS (after the gallery, on the green): upright videos in a row, like
+   phone reels. Four across on wide screens, all the same size and on one level; on phones a row you swipe
+   sideways, one card snapping into place at a time. js/main.js plays a card
+   when it is pressed and stops the others.
+   ========================================================================== */
+.reels { --pad: 16px; padding: 30px 0 64px; color: var(--paper); }
+.reels-title { margin: 0; padding: 0 var(--pad); text-align: center; font-family: var(--body); font-weight: 400; font-size: clamp(32px, 9vw, 46px); line-height: 1.05; letter-spacing: -.04em; }
+.reels-title em { font: inherit; letter-spacing: inherit; color: #FFD66B; }
+.reels-row { display: flex; align-items: flex-start; gap: 12px; margin: 26px 0 0; padding: 0 var(--pad); list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 var(--pad); scrollbar-width: none; }
+.reels-row::-webkit-scrollbar { display: none; }
+.reel { position: relative; flex: none; width: 62vw; max-width: 300px; aspect-ratio: 9 / 16; border-radius: 18px; overflow: hidden; scroll-snap-align: center; background: rgb(251 248 241 / .06); cursor: pointer;
+  box-shadow: 0 18px 40px rgb(0 0 0 / .32); transition: box-shadow .35s, translate .5s cubic-bezier(.16, 1, .3, 1); }
+.reel video { display: block; width: 100%; height: 100%; object-fit: cover; background: #0b1f19; }
+.reel::after { content: ""; position: absolute; inset: 55% 0 0 0; background: linear-gradient(to bottom, rgb(2 20 14 / 0), rgb(2 20 14 / .72)); pointer-events: none; transition: opacity .35s; }
+.reel-name { position: absolute; z-index: 1; left: 16px; right: 16px; bottom: 14px; margin: 0; font-size: 14px; font-weight: 500; letter-spacing: -.01em; pointer-events: none; transition: opacity .35s; }
+.reel-play { position: absolute; z-index: 1; left: 50%; top: 50%; translate: -50% -50%; display: grid; place-items: center; width: 58px; height: 58px; padding: 0; border: 1px solid rgb(255 255 255 / .55); border-radius: 50%;
+  background: rgb(2 20 14 / .38); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: var(--paper); cursor: pointer; transition: opacity .3s, background .25s, scale .25s; }
+.reel-play svg { width: 24px; height: 24px; fill: currentColor; }
+.reel-play .i-pause { display: none; }
+.reel:hover { box-shadow: 0 22px 46px rgb(0 0 0 / .4); }
+/* The gold line round each card (js/main.js draws it to fit the card). When the section is first seen the line
+   traces itself round the card, one card after another, like the gold pattern behind. "--line-time" is how long
+   one card's line takes, "--line-step" the pause between cards. */
+.reels { --line-time: 1.7s; --line-step: .22s; }
+.reel-line { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+/* same gold and same thickness as the lines of the pattern behind (1.15 on a 600 repeat shown at --pattern-size), no glow */
+.reel-line path { fill: none; stroke: #D2AE77; stroke-width: calc(1.15px * 660 / 600); stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; opacity: .6;
+  transition: stroke-dashoffset var(--line-time) cubic-bezier(.45, 0, .2, 1) calc(.45s + var(--i, 0) * var(--line-step)), stroke .3s, opacity .3s; }
+.reels.is-waiting .reel-line path { stroke-dashoffset: 1; }
+.reel:hover .reel-line path { opacity: 1; }
+@media (max-width: 899px) { .reel-line path { stroke-width: calc(1.15px * 420 / 600); } }
+.reel:hover .reel-play { background: rgb(255 214 107 / .9); color: var(--ink); scale: 1.06; }
+/* while a card is playing: the button hides (it comes back when you point at the card) and shows "pause" */
+.reel.is-playing .reel-play { opacity: 0; }
+.reel.is-playing:hover .reel-play, .reel.is-playing .reel-play:focus-visible { opacity: 1; }
+.reel.is-playing .i-play { display: none; } .reel.is-playing .i-pause { display: block; }
+.reel.is-playing::after, .reel.is-playing .reel-name { opacity: 0; }
+/* a card with no video file yet */
+.reel.is-empty { cursor: default; }
+.reel.is-empty .reel-play { display: none; }
+.reel.is-empty::before { content: "Video coming soon"; position: absolute; z-index: 1; left: 50%; top: 50%; translate: -50% -50%; padding: 9px 16px; border-radius: 999px; border: 1px solid rgb(255 255 255 / .45);
+  background: rgb(2 20 14 / .5); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+@media (min-width: 900px) {
+  .reels { --pad: 2.2vw; padding: 4vw 0 7vw; }
+  .reels-title { font-size: clamp(44px, 5vw, 104px); }
+  .reels-row { justify-content: center; gap: 1.6vw; margin-top: 3.4vw; overflow: visible; }
+  .reel { width: 19.5vw; max-width: none; border-radius: 1.3vw; }
+  .reel:hover { translate: 0 -.5vw; }
+}
+/* the one-time rise into view */
+.reels-title, .reel { transition-property: opacity, translate, box-shadow; transition-duration: .9s, .9s, .35s; transition-timing-function: cubic-bezier(.16, 1, .3, 1); }
+.reel:nth-child(1) { transition-delay: .1s, .1s, 0s; } .reel:nth-child(2) { transition-delay: .2s, .2s, 0s; } .reel:nth-child(3) { transition-delay: .3s, .3s, 0s; } .reel:nth-child(4) { transition-delay: .4s, .4s, 0s; }
+.reels.is-waiting :is(.reels-title, .reel) { opacity: 0; translate: 0 30px; }
+
+/* ==========================================================================
+   CLOSING SECTION (last on the page): "A new door is opening soon" over the
+   picture of doors in a misty field. Three layers: the picture, the big
+   two-line headline, and on top the open door cut out of the same picture, so
+   the headline passes behind the door. The top of the picture melts into the
+   dark emerald above it; the button sits on the grass below the doors.
+   The picture eases back a little when the section first comes into view.
+   ========================================================================== */
+/* "--door-drop" is the empty dark space above the picture: it pushes the whole section down (0 = none) */
+.door { --door-drop: 38vw; position: relative; overflow: hidden; padding-top: var(--door-drop); color: var(--paper); }
+.door-layer { display: block; width: 100%; height: 142vw; object-fit: cover; object-position: 50% 50%; transform-origin: 50% 0%; transition: scale 3.2s cubic-bezier(.22, .61, .36, 1), filter 2.4s cubic-bezier(.4, 0, .2, 1); }
+.door-front { position: absolute; z-index: 2; top: var(--door-drop); left: 0; pointer-events: none; }
+/* the picture itself fades out towards its top edge, so that edge cannot show as a line in any browser, at any moment of the opening movement */
+.door-photo { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 9%); mask-image: linear-gradient(to bottom, transparent 0, #000 9%); }
+/* melts into the emerald above; it ends just above the open door, so door and cut-out stay the same brightness */
+/* it starts a few pixels above the picture and is solid there, so the picture's top edge can never show as a line */
+.door::before { content: ""; position: absolute; z-index: 1; inset: calc(var(--door-drop) - 4px) 0 auto 0; height: calc(36vw + 4px); background: linear-gradient(to bottom, var(--emerald-dark) 0, var(--emerald-dark) 8px, rgb(2 45 30 / .7) 34%, rgb(2 45 30 / 0) 100%); pointer-events: none; }
+.door-title { position: absolute; z-index: 1; top: calc(var(--door-drop) + 15.4vw); left: 0; right: 0; margin: 0; text-align: center; font-family: var(--body); font-weight: 400; font-size: 11.4vw; line-height: .96; letter-spacing: -.045em; text-shadow: 0 1px 3px rgb(2 20 14 / .45), 0 2px 34px rgb(2 20 14 / .7); }
+/* the second line: same typeface and weight as the first line, in gold (not the italic serif used elsewhere) */
+.door-title em { font: inherit; letter-spacing: inherit; color: #FFD66B; }
+.door-foot { position: absolute; z-index: 3; inset: auto 16px 9% 16px; text-align: center; }
+.door-btn { display: inline-flex; align-items: center; gap: 12px; height: 48px; padding: 0 22px; border-radius: 999px; background: var(--paper); color: var(--ink); font-size: 14px; font-weight: 500; text-decoration: none; }
+.door-btn span { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.door-btn:hover { background: var(--gold); }
+@media (min-width: 900px) {
+  .door-layer { height: auto; }
+  .door::before { height: calc(14.6vw + 4px); }
+  .door { --door-drop: 15.5vw; }
+  .door-title { top: calc(var(--door-drop) + 1.5vw); font-size: 9vw; }
+  .door-foot { inset: auto 2.2vw 5.5vw 2.2vw; }
+}
+.door-title, .door-btn { transition: opacity .9s cubic-bezier(.16, 1, .3, 1) .25s, translate .9s cubic-bezier(.16, 1, .3, 1) .25s, background .25s; }
+.door-btn { transition-delay: .7s, .7s, 0s; }
+.door.is-waiting :is(.door-title, .door-btn) { opacity: 0; translate: 0 26px; }
+.door.is-waiting .door-layer { scale: 1.08; filter: brightness(.8); }
+/* The two looks. Only the pictures of the chosen look are shown; the headline sits lower in the gold look,
+   because the gold door stands lower in its picture. */
+.door[data-look="field"] .look-gold, .door[data-look="gold"] .look-field { display: none; }
+.door[data-look="gold"] .door-foot { bottom: 3.5%; }
+/* gold look: the picture's black background is dropped, so the emerald shows instead. "lighten" keeps, at every
+   point, whichever is brighter: the picture (the door, its glow, the light on the floor) or the emerald behind it. */
+.door[data-look="gold"] .door-photo { mix-blend-mode: lighten; -webkit-mask-image: none; mask-image: none; }
+.door[data-look="gold"]::before { display: none; }
+/* gold look: no zoom when the section comes into view; the picture simply stays still */
+.door[data-look="gold"] .door-layer { transition: none; }
+.door[data-look="gold"].is-waiting .door-layer { scale: none; filter: none; }
+/* gold look: its picture already has a lot of empty wall above the door, so there is no extra space above it
+   ("--door-drop: 0") and the picture is pulled up a little ("--door-lift"), which trims that empty wall */
+.door[data-look="gold"] { --door-drop: 0vw; --door-lift: 13.3vw; }
+.door[data-look="gold"] .door-photo { margin-top: calc(var(--door-lift) * -1); }
+.door[data-look="gold"] .door-front { top: calc(var(--door-lift) * -1); }
+.door[data-look="gold"] .door-title { top: calc(30.1vw - var(--door-lift)); }
+.door[data-look="gold"]::before { height: calc(52vw + 4px); background: linear-gradient(to bottom, var(--emerald-dark) 0, var(--emerald-dark) 8px, rgb(2 45 30 / .55) 40%, rgb(2 45 30 / 0) 100%); }
+@media (min-width: 900px) {
+  .door[data-look="gold"] { --door-drop: 0vw; --door-lift: 2.3vw; }
+  .door[data-look="gold"] .door-title { top: calc(7.3vw - var(--door-lift)); }
+  .door[data-look="gold"]::before { height: calc(20vw + 4px); }
+}
+/* ---- DOOR OPENS (gold look only) -------------------------------------------------------------------------
+   When the section comes into view, the two leaves of the gold door swing inward and light pours out.
+   ".door-stage" is a box laid exactly over the picture (same size and place, on every screen); inside it,
+   ".door-way" covers the doorway: left 746, top 381, 180 wide, 386 high on the 1672 x 941 picture. Behind
+   the leaves is a panel of light; each leaf is a picture of the left-hand leaf (assets/doors-gold-leaf.jpg, and
+   its mirror image doors-gold-leaf-r.jpg for the right-hand one), hinged on its outer edge.
+   "--door-open" is how far the leaves swing (degrees), "--door-time" how long it takes, "--door-wait" the
+   pause before it starts. Before the section is seen the leaves stand almost shut ("--door-ajar"). */
+.door-stage { --door-open: 24deg; --door-ajar: 3deg; --door-time: 2.2s; --door-wait: .55s;
+  position: absolute; z-index: 3; top: calc(var(--door-drop) - var(--door-lift, 0vw)); left: 50%; width: calc(142vw * 1672 / 941); aspect-ratio: 1672 / 941; translate: -50% 0;
+  container-type: inline-size; pointer-events: none; }
+.door-way { position: absolute; left: 44.617%; top: 40.489%; width: 10.766%; height: 41.02%; overflow: hidden; perspective: 34cqw; perspective-origin: 50% 46%;
+  background: radial-gradient(ellipse 70% 60% at 50% 58%, #fffdf2 0%, #fff0bf 34%, #ffd266 68%, #f2ac23 100%);
+  box-shadow: 0 0 2.2cqw rgb(255 205 96 / .75), 0 0 6cqw rgb(255 190 70 / .45);
+  transition: box-shadow var(--door-time) ease var(--door-wait); }
+.door-leaf { position: absolute; top: 0; bottom: 0; width: 50%; background: url("../assets/doors-gold-leaf.jpg") 0 0 / 100% 100% no-repeat;
+  transition: transform var(--door-time) cubic-bezier(.3, .05, .2, 1) var(--door-wait), filter var(--door-time) ease var(--door-wait); filter: brightness(1.12); }
+.door-leaf-l { left: 0; transform-origin: 0% 50%; transform: rotateY(var(--door-open)); }
+.door-leaf-r { right: 0; transform-origin: 100% 50%; transform: rotateY(calc(var(--door-open) * -1)); background-image: url("../assets/doors-gold-leaf-r.jpg"); }
+/* the light that falls on the floor in front of the door: it widens as the door opens */
+.door-spill { position: absolute; left: 30%; top: 81.4%; width: 40%; height: 17%; mix-blend-mode: screen;
+  background: radial-gradient(ellipse 50% 100% at 50% 0%, rgb(255 214 120 / .55) 0%, rgb(255 190 80 / .26) 40%, rgb(255 180 60 / 0) 74%);
+  /* shaped as a fan that starts at the doorway (its point is just behind the door) and spreads forward, with
+     soft sides: so the light begins only as wide as the door, not as a wide bar along the bottom of the wall */
+  -webkit-mask-image: conic-gradient(from 0deg at 50% -20%, transparent 0deg, transparent 102deg, #000 124deg, #000 236deg, transparent 258deg, transparent 360deg);
+          mask-image: conic-gradient(from 0deg at 50% -20%, transparent 0deg, transparent 102deg, #000 124deg, #000 236deg, transparent 258deg, transparent 360deg);
+  transition: opacity var(--door-time) ease var(--door-wait), scale var(--door-time) cubic-bezier(.3, .05, .2, 1) var(--door-wait); transform-origin: 50% 0%; }
+/* before the section is seen: almost shut, only a sliver of light */
+.door.is-waiting .door-leaf-l { transform: rotateY(var(--door-ajar)); filter: brightness(.94); }
+.door.is-waiting .door-leaf-r { transform: rotateY(calc(var(--door-ajar) * -1)); filter: brightness(.94); }
+.door.is-waiting .door-way { box-shadow: 0 0 .6cqw rgb(255 205 96 / .35), 0 0 2cqw rgb(255 190 70 / .12); }
+.door.is-waiting .door-spill { opacity: 0; scale: .35 .7; }
+@media (min-width: 900px) { .door-stage { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .door-leaf, .door-way, .door-spill { transition: none; } }
+.door-foot { z-index: 5; }
+
+@media (prefers-reduced-motion: reduce) { .door-layer { transition: none; } }
+
+/* ==========================================================================
+   FOOTER (last on the page): on the near-black the door's floor ends in, so
+   the two run together. Top: the name with contact details, three columns of
+   links and an email box. Under them a gold line drawing of the lake front
+   that draws itself, then the small print.
+   ========================================================================== */
+/* "--foot-bg" is the footer's colour. The floor under the door fades fully into it at its bottom edge (the rule
+   on .door::after), so the door section ends in exactly the colour the footer starts with, right across the width. */
+:root { --foot-bg: #050a0b; }
+.door::after { content: ""; position: absolute; z-index: 4; inset: auto 0 0 0; height: 17%; pointer-events: none;
+  background: linear-gradient(to bottom, rgb(5 10 11 / 0) 0, rgb(5 10 11 / .5) 38%, rgb(5 10 11 / .9) 72%, var(--foot-bg) 100%); }
+.foot { --gold-line: #D2AE77; --foot-ink: rgb(251 248 241 / .74); position: relative; overflow: hidden; padding: 44px 0 0; background: var(--foot-bg); color: var(--paper); }
+.foot svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+/* top: the name and contact details, three columns of links, the email box */
+.foot-cols { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 34px 20px; padding: 0 22px; }
+.foot-brand, .foot-news { grid-column: 1 / -1; }
+/* the name in the footer uses the same lettering as the name in the hero: display font, capitals, white */
+.foot-mark { margin: 0; font-family: var(--display); font-weight: 500; font-size: 26px; line-height: 1; letter-spacing: -.03em; text-transform: uppercase; color: var(--paper); white-space: nowrap; }
+.foot-tag { margin: 16px 0 0; max-width: 20em; font-size: 14px; line-height: 1.6; color: var(--foot-ink); }
+.foot-contact { margin: 20px 0 0; padding: 0; list-style: none; display: grid; gap: 12px; font-size: 14px; color: var(--foot-ink); }
+.foot-contact li { display: flex; align-items: center; gap: 12px; }
+.foot-contact svg { flex: none; width: 18px; height: 18px; color: var(--gold-line); }
+.foot-contact a { color: inherit; text-decoration: none; }
+.foot h3 { margin: 0 0 18px; font-size: 11.5px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-line); }
+.foot-col { display: flex; flex-direction: column; align-items: flex-start; gap: 13px; }
+.foot-col a { position: relative; color: var(--foot-ink); text-decoration: none; font-size: 14px; transition: color .25s; }
+.foot-col a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: var(--gold-line); scale: 0 1; transform-origin: 0 50%; transition: scale .35s cubic-bezier(.16, 1, .3, 1); }
+.foot-col a:hover, .foot-contact a:hover, .foot-up:hover { color: #FFE08A; }
+.foot-col a:hover::after { scale: 1 1; }
+.foot-news p { margin: 0; max-width: 22em; font-size: 14px; line-height: 1.6; color: var(--foot-ink); }
+.foot-form { display: flex; margin-top: 18px; max-width: 340px; border: 1px solid rgb(210 174 119 / .5); transition: border-color .25s; }
+.foot-form:focus-within { border-color: #FFE08A; }
+.foot-form input { flex: 1; min-width: 0; height: 46px; padding: 0 14px; border: 0; background: transparent; color: var(--paper); font: 400 14px var(--body); outline: none; }
+.foot-form input::placeholder { color: rgb(251 248 241 / .45); }
+.foot-form button { flex: none; display: grid; place-items: center; width: 48px; border: 0; background: var(--gold-line); color: #050a0b; cursor: pointer; transition: background .25s; }
+.foot-form button:hover { background: #FFE08A; }
+.foot-form button svg { width: 20px; height: 20px; }
+.foot-note { min-height: 1.4em; margin-top: 10px !important; font-size: 12px !important; color: #E9C77E !important; }
+/* the gold line drawing of the lake front. Every line starts undrawn and is traced, left to right, when the
+   drawing comes into view ("--scene-time" for one line, "--scene-step" stretches or squeezes the sweep). */
+.foot-scene { --scene-time: 1.6s; --scene-step: 1; position: relative; margin-top: 10px; overflow: hidden; }
+.foot-art { display: block; width: 250%; margin-left: -75%; height: auto; color: var(--gold-line); stroke-width: 1.3 !important; }
+.foot-art .fs-fill { fill: var(--foot-bg); }
+.foot-art path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset var(--scene-time) cubic-bezier(.45, 0, .2, 1) calc(var(--n, 0) * var(--scene-step) * 1s); }
+.foot-scene.is-drawn .foot-art path { stroke-dashoffset: 0; }
+.foot-scene.is-still .foot-art path { transition: none; }
+/* the large countdown: thin light numbers, gold labels, a fine gold line between each */
+.foot-count { position: relative; z-index: 1; display: flex; justify-content: center; margin: 46px 0 40px; padding: 0 12px; font-family: var(--body); }
+.fc-cell { margin: 0; padding: 0 4.6vw; display: flex; flex-direction: column; align-items: center; gap: 10px; border-left: 1px solid rgb(210 174 119 / .4); }
+.fc-cell:first-child { border-left: 0; }
+.fc-num { font-size: 13vw; font-weight: 300; line-height: .9; letter-spacing: -.05em; font-variant-numeric: tabular-nums; color: var(--paper); }
+.fc-unit { font-size: 9.5px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--gold-line); }
+.foot-count.is-done { font-size: clamp(34px, 6vw, 90px); letter-spacing: -.03em; color: #E9C77E; }
+.foot-count { transition: opacity .9s cubic-bezier(.16, 1, .3, 1) .4s, translate .9s cubic-bezier(.16, 1, .3, 1) .4s; }
+.foot.is-waiting .foot-count { opacity: 0; translate: 0 24px; }
+@media (min-width: 900px) {
+  .foot-count { margin: 5.4vw 0 5vw; }
+  .fc-cell { padding: 0 4.2vw; gap: 1.1vw; }
+  .fc-num { font-size: 9.6vw; }
+  .fc-unit { font-size: clamp(10px, .82vw, 14px); }
+}
+/* small print */
+.foot-base { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px 22px 22px; border-top: 1px solid rgb(210 174 119 / .22); font-size: 12px; color: rgb(251 248 241 / .5); }
+.foot-base p { margin: 0; }
+.foot-up { color: rgb(251 248 241 / .62); text-decoration: none; font-size: 11px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; transition: color .25s; }
+@media (min-width: 900px) {
+  .foot { padding-top: 5.2vw; }
+  .foot-cols { grid-template-columns: 1.5fr .8fr .8fr .8fr 1.45fr; gap: 3vw; padding: 0 6vw; }
+  .foot-brand, .foot-news { grid-column: auto; }
+  .foot-mark { font-size: clamp(24px, 2.1vw, 40px); }
+  .foot-scene { margin-top: -2vw; }
+  .foot-art { width: 100%; margin-left: 0; }
+  .foot-base { flex-direction: row; justify-content: space-between; padding: 1.4vw 6vw 1.6vw; }
+}
+/* the one-time rise into view of the top part */
+.foot-cols > * { transition: opacity .9s cubic-bezier(.16, 1, .3, 1), translate .9s cubic-bezier(.16, 1, .3, 1); }
+.foot-cols > :nth-child(2) { transition-delay: .08s; } .foot-cols > :nth-child(3) { transition-delay: .16s; } .foot-cols > :nth-child(4) { transition-delay: .24s; } .foot-cols > :nth-child(5) { transition-delay: .32s; }
+.foot.is-waiting .foot-cols > * { opacity: 0; translate: 0 24px; }
+
+/* ==========================================================================
+   GRAIN OVER EVERYTHING: a fine film grain laid over the top of every layer,
+   from the second section (About) to the end of the footer: text, pictures,
+   the gallery, the door, all of it. The grain is assets/grain-top.png, tiny
+   light and dark specks on a clear background. It lets clicks through.
+   "--top-grain" is how strong it is (0 = off, 1 = as made, 2 = twice as
+   strong); "--top-grain-size" is how fine (smaller = finer).
+   ========================================================================== */
+.grain-zone { --top-grain: .9; --top-grain-size: 180px; position: relative; }
+.grain-zone::after { content: ""; position: absolute; inset: 0; z-index: 60; pointer-events: none; opacity: var(--top-grain);
+  background: url("../assets/grain-top.png") 0 0 / var(--top-grain-size) var(--top-grain-size) repeat; }
+
+/* ==========================================================================
+   MOVED PIECES
+   Each text or interface piece marked data-move in index.html can be shifted
+   from its designed place: --mx is pixels across, --my pixels down, on the
+   1672 x 941 desktop frame. Edit mode (add ?edit to the address) drags them
+   and "Save to site" rewrites the lines between the two MOVED markers, so do
+   not put anything else between them. The phone layout is not affected.
+   ========================================================================== */
+@media (min-width: 641px) {
+  [data-move] { translate: calc(var(--mx, 0) * var(--u)) calc(var(--my, 0) * var(--u)); }
+  /* MOVED-START (written by edit mode) */
+  [data-move="corner-text"] { --mx: -32.9; --my: 4.7; }
+  [data-move="name-lakeside"] { --mx: -9.7; --my: 98.8; }
+  [data-move="name-pavilion"] { --mx: -1.9; --my: 73.2; }
+  [data-move="register-button"] { --mx: -40.6; --my: 1.8; }
+  [data-move="signup-card"] { --mx: -34.9; --my: 0.0; }
+  /* MOVED-END */
+}
+
+/* edit mode: outlines and the toolbar. Only present when the address ends in ?edit. */
+.lp-edit [data-move] { cursor: move; outline: 1px dashed rgb(255 255 255 / .45); outline-offset: 4px; user-select: none; -webkit-user-select: none; touch-action: none; }
+.lp-edit [data-move]:hover { outline-color: var(--gold); }
+.lp-edit [data-move].lp-edit-on { outline: 2px solid var(--gold); }
+.lp-edit [data-move] * { pointer-events: none; }
+.lp-edit-dragging, .lp-edit-dragging * { cursor: grabbing !important; }
+.lp-edit-bar {
+  position: fixed; left: 50%; bottom: 16px; translate: -50% 0; z-index: 1000; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px;
+  max-width: calc(100vw - 24px); padding: 10px 12px 10px 18px; border-radius: 14px; background: rgb(11 31 25 / .94); color: var(--paper);
+  font: 400 14px/1.3 var(--body); box-shadow: 0 10px 40px rgb(0 0 0 / .45); border: 1px solid rgb(255 255 255 / .16);
+}
+.lp-edit-bar.lp-edit-top { bottom: auto; top: 16px; }
+.lp-edit-bar strong { font-weight: 600; color: var(--gold); }
+.lp-edit-info { min-width: 16em; opacity: .9; font-variant-numeric: tabular-nums; }
+.lp-edit-bar button { height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid rgb(255 255 255 / .3); background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.lp-edit-bar button:hover { border-color: var(--gold); color: var(--gold); }
+.lp-edit-bar button:disabled { opacity: .4; cursor: default; }
+.lp-edit-bar .lp-edit-primary { background: var(--paper); border-color: var(--paper); color: var(--ink); font-weight: 600; }
+.lp-edit-bar .lp-edit-primary:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+/* the "Edit layout" button: shown only on your own computer (see js/main.js) */
+.lp-edit-open {
+  position: fixed; left: 16px; bottom: 16px; z-index: 1000; height: 36px; padding: 0 16px; display: inline-flex; align-items: center; border-radius: 999px;
+  background: rgb(11 31 25 / .92); color: var(--paper); border: 1px solid rgb(255 255 255 / .3); font: 600 13px var(--body); box-shadow: 0 6px 24px rgb(0 0 0 / .4);
+}
+.lp-edit-open:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ============================================================
+   CALL-TO-ACTION BUTTONS
+   Brushed gold, a light that sweeps across, a soft ring that
+   breathes out, and an arrow that leans forward on hover.
+   Change --cta-every to make the light pass more or less often;
+   set --cta-on to "paused" to stop the movement.
+   ============================================================ */
+:root { --cta-every: 3.6s; --cta-on: running; }
+.cta, .deed-btn, .door-btn {
+  isolation: isolate;
+  background: linear-gradient(180deg, #F6DFA4 0%, #E3BE7C 46%, #C79A55 100%);
+  color: #1A1206; font-weight: 600;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .65), inset 0 -1px 0 rgb(90 58 16 / .35), 0 10px 28px -10px rgb(210 174 119 / .75);
+}
+.deed-btn, .door-btn { position: relative; }
+.cta::before, .deed-btn::before, .door-btn::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(108deg, transparent 38%, rgb(255 255 255 / .85) 50%, transparent 62%) 140% 0 / 260% 100% no-repeat;
+  animation: cta-shine var(--cta-every) cubic-bezier(.4, 0, .2, 1) infinite, cta-ring var(--cta-every) ease-out infinite;
+  animation-play-state: var(--cta-on);
+}
+@keyframes cta-shine { 0%, 45% { background-position: 140% 0; } 80%, 100% { background-position: -40% 0; } }
+@keyframes cta-ring {
+  0%, 55% { box-shadow: 0 0 0 0 rgb(233 199 126 / .6); }
+  100%    { box-shadow: 0 0 0 16px rgb(233 199 126 / 0); }
+}
+/* the little dot becomes a dark circle with a gold arrow */
+.cta::after, .deed-btn span, .door-btn span {
+  width: 28px; height: 28px; margin-right: -12px; border-radius: 50%; flex: none;
+  background: #14100A url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23F0CF8E' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8h10M9 4l4 4-4 4'/%3E%3C/svg%3E") center / 52% no-repeat;
+  transition: translate .35s cubic-bezier(.16, 1, .3, 1);
+}
+.cta:hover, .deed-btn:hover, .door-btn:hover { background: linear-gradient(180deg, #FFEBB8 0%, #EDCB8A 46%, #D2A862 100%); }
+.cta:hover::after, .deed-btn:hover span, .door-btn:hover span { translate: 4px 0; }
+@media (min-width: 641px) {
+  .cta::after { width: calc(34 * var(--u)); height: calc(34 * var(--u)); margin-right: calc(-18 * var(--u)); }
+}
+@media (prefers-reduced-motion: reduce) { .cta::before, .deed-btn::before, .door-btn::before { animation: none; } }
+
+/* ============================================================
+   HIDDEN PIECES
+   Anything marked "hidden" in index.html stays off the page
+   (the number strip, the gallery, the door section and the
+   links to them). Delete the word "hidden" there to bring one back.
+   ============================================================ */
+[hidden] { display: none !important; }
+/* While the door section is hidden, the green area meets the footer directly, so its bottom edge
+   fades into the footer's colour instead of ending in a hard line. Stops by itself when the door is shown again. */
+.dark-zone:has(+ .door[hidden])::after { content: ""; position: absolute; z-index: 2; inset: auto 0 0 0; height: 104px; pointer-events: none;
+  background: linear-gradient(to bottom, rgb(5 10 11 / 0) 0, rgb(5 10 11 / .5) 42%, rgb(5 10 11 / .9) 76%, var(--foot-bg) 100%); }
+.dark-zone:has(+ .door[hidden]) .reels { padding-bottom: 104px; }
+@media (min-width: 900px) {
+  .dark-zone:has(+ .door[hidden])::after { height: 10vw; }
+  .dark-zone:has(+ .door[hidden]) .reels { padding-bottom: 10vw; }
+}
+
+/* ============================================================
+   PRICE HIGHLIGHT
+   A gold marker stroke is drawn behind the ৳10,000 just as the
+   number finishes counting. --mark-delay is when it starts
+   (after the section comes into view); --mark-on: 0 hides it.
+   ============================================================ */
+.deed { --mark-delay: 2.7s; --mark-on: 1; }
+.deed-price { position: relative; isolation: isolate; }
+.deed-price::before {
+  content: ""; position: absolute; z-index: -1; inset: .36em -.07em -.03em -.06em; pointer-events: none;
+  background: linear-gradient(96deg, #F3D48E 0%, #E2BC78 55%, #D2AE77 100%);
+  border-radius: .16em .5em .2em .42em / .34em .18em .4em .2em;
+  rotate: -1.3deg; opacity: calc(.92 * var(--mark-on));
+  transform-origin: 0 50%; transition: transform .8s cubic-bezier(.65, 0, .25, 1) var(--mark-delay);
+}
+.deed.is-waiting .deed-price::before { transform: scaleX(0); transition: none; }
+@media (prefers-reduced-motion: reduce) { .deed-price::before { transition: none; } }
+
+/* gold button under the footer countdown */
+.foot-cta { position: relative; z-index: 1; display: flex; justify-content: center; margin: -8px 0 44px; transition: opacity .9s cubic-bezier(.16, 1, .3, 1) .55s, translate .9s cubic-bezier(.16, 1, .3, 1) .55s; }
+.foot.is-waiting .foot-cta { opacity: 0; translate: 0 24px; }
+@media (min-width: 900px) { .foot-cta { margin: -1.6vw 0 4.6vw; } .foot-cta .door-btn { height: 56px; padding: 0 28px; font-size: 15px; } }
+
+/* ============================================================
+   HERO BUTTON ON THE PHOTO
+   Gold blended into the sandy photo, so in the hero only the
+   button is clean ivory-white (like the big name and the
+   sign-up card), a little larger, with a deep green arrow
+   circle, a soft dark shadow to lift it off the picture, a
+   gold light passing across and a white ring breathing out.
+   The other buttons (on green and black) stay gold.
+   ============================================================ */
+.cta {
+  background: #FFFDF8; color: var(--ink); font-weight: 700;
+  box-shadow: 0 18px 40px -12px rgb(0 0 0 / .75), 0 2px 6px rgb(0 0 0 / .25);
+}
+.cta:hover { background: #fff; }
+.cta::before {
+  background-image: linear-gradient(108deg, transparent 38%, rgb(226 188 120 / .6) 50%, transparent 62%);
+  animation-name: cta-shine, cta-ring-white;
+}
+@keyframes cta-ring-white {
+  0%, 55% { box-shadow: 0 0 0 0 rgb(255 253 248 / .7); }
+  100%    { box-shadow: 0 0 0 18px rgb(255 253 248 / 0); }
+}
+.cta::after {
+  background-color: #E3BE7C;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%230B1F19' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8h10M9 4l4 4-4 4'/%3E%3C/svg%3E"), linear-gradient(180deg, #F6DFA4, #C79A55);
+  background-size: 52%, cover; background-position: center; background-repeat: no-repeat;
+}
+@media (min-width: 641px) {
+  .cta { height: calc(68 * var(--u)); padding: 0 calc(38 * var(--u)); font-size: calc(20 * var(--u)); top: calc(742 * var(--u)); }
+  .cta::after { width: calc(40 * var(--u)); height: calc(40 * var(--u)); margin-right: calc(-22 * var(--u)); }
+}
+
+/* ============================================================
+   HERO HEADLINE
+   The giant text is now "The biggest investment opportunity in
+   Purbachal": two lines left of the pin (.w1), two lines right
+   of it (.w2). "Lakeside Pavilion" is the smaller line (.tag)
+   under the right half. --head is the letter size on desktop.
+   ============================================================ */
+.giant { font-size: 10vw; }
+.giant .gl { display: block; }
+@media (min-width: 641px) {
+  .giant { --head: 107; font-size: calc(var(--head) * var(--u)); line-height: .98; }
+  .giant .gl { position: static; }
+  /* the two halves are pulled in towards the pin, so the end of the left half and the start of the right half tuck behind it */
+  .giant .w1 { left: calc(100 * var(--u)); top: calc(84 * var(--u)); }
+  .giant .w2 { left: auto; right: calc(84 * var(--u)); top: calc(250 * var(--u)); text-align: right; }
+  /* "Lakeside Pavilion": bottom-left corner, ending level with the bottom of the sign-up card */
+  .tag { left: calc(40 * var(--u)); top: calc(799 * var(--u)); text-shadow: 0 1px calc(18 * var(--u)) rgb(4 12 10 / .5); }
+}
+
+/* headline letters: a little more open spacing; no shadow or dark haze behind them (removed at the owner's request) */
+@media (min-width: 641px) { .giant { letter-spacing: -.018em; text-shadow: none; } }
+
+/* headline words (each is a .gw span in index.html) stay inline inside their line */
+.giant .gw { position: static; display: inline; white-space: nowrap; }
+
+/* ============================================================
+   KEY WORDS LARGE, THE OTHER WORDS SMALLER
+   The key words (marked "hi": BIGGEST, INVESTMENT, PURBACHAL)
+   all share the full headline size. The other words (THE,
+   OPPORTUNITY, IN) are --small times that size.
+   ============================================================ */
+.giant { --small: .5; }
+.giant .gl:has(.hi) .gw:not(.hi) { font-size: calc(var(--small) * 1em); letter-spacing: 0; }
+.giant .gl:not(:has(.hi)) { font-size: calc(var(--small) * 1em); letter-spacing: 0; line-height: 1.25; }
+
+/* a light shadow behind the headline so the white letters read on the photo. It is put on each whole line
+   (not on single letters) so one letter's shadow never falls on the next. --head-shadow: 0 turns it off. */
+@media (min-width: 641px) {
+  .giant { --head-shadow: .38; }
+  .giant .gl { filter: drop-shadow(0 calc(2 * var(--u)) calc(10 * var(--u)) rgb(4 12 10 / var(--head-shadow))); }
+}
+
+/* ============================================================
+   PHONE FIXES
+   Tidy-ups for narrow screens only (up to 640px wide).
+   ============================================================ */
+@media (max-width: 640px) {
+  /* headline: larger, with the small "OPPORTUNITY" line sitting closer to its neighbours */
+  .giant { font-size: 13.2vw; padding-top: 10px; }
+  .giant .gl:not(:has(.hi)) { line-height: 1.12; }
+  .tag { padding-top: 16px; }
+  .tag br { display: none; }
+
+  /* hero countdown: four equal columns across the full width */
+  .count-in { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .count-cell { padding: 0 0 0 14px; }
+  .count-cell:first-child { padding-left: 0; }
+
+  /* footer countdown: four equal columns that stay inside the screen */
+  .foot-count { display: grid; grid-template-columns: repeat(4, 1fr); padding: 0 22px; }
+  .fc-cell { padding: 0; }
+  .fc-num { font-size: 12vw; }
+  .fc-unit { font-size: 9px; letter-spacing: .16em; }
+}
+
+/* ============================================================
+   PHONE HERO: SAME IDEA AS THE DESKTOP HERO
+   One picture from top to bottom with the words on it:
+   - the sky is carried up behind the logo, menu and headline,
+   - the pin and the land sit in the middle (pin tip just
+     touching the headline),
+   - the name, the button and the countdown sit on the lake,
+     which melts into the dark where the sign-up card is.
+   --sky is the colour of the top of the photo.
+   --kiss is how far the photo climbs up under the headline,
+   --onlake is how far the bottom words climb onto the lake.
+   ============================================================ */
+@media (max-width: 640px) {
+  .frame {
+    --sky: 66 111 149; --kiss: 13vw; --onlake: 31vw;
+    background: linear-gradient(to bottom, #0b1f2a 0, rgb(34 62 86) 64px, rgb(var(--sky)) 62vw, rgb(var(--sky)) 112vw, rgb(var(--sky) / 0) 140vw), var(--ink);
+  }
+  .nav, .corner, .giant { position: relative; z-index: 3; }
+  .corner { order: 2; padding-top: 18px; color: #F6DFA4; }
+  .giant { order: 3; filter: drop-shadow(0 2px 10px rgb(6 20 30 / .35)); }
+
+  .photo { order: 4; z-index: 1; aspect-ratio: 1 / 1.13; margin-top: calc(-1 * var(--kiss)); overflow: visible; }
+  .scene { overflow: hidden; }
+  /* the photo's own sky fades up into the sky colour above it, and its sides and water fade into the dark below */
+  .photo::before { content: ""; position: absolute; z-index: 2; inset: -1px 0 auto 0; height: 11%; pointer-events: none; background: linear-gradient(to bottom, rgb(var(--sky)) 0%, rgb(var(--sky)) 12%, rgb(var(--sky) / 0) 100%); }
+  .photo::after { inset: auto 0 0 0; height: 46%; background: linear-gradient(to bottom, rgb(11 31 25 / 0) 0%, rgb(11 31 25 / .3) 40%, rgb(11 31 25 / .78) 74%, var(--ink) 100%); }
+
+  .tag, .cta, .count { position: relative; z-index: 3; }
+  .tag { margin-top: calc(-1 * var(--onlake)); padding-top: 0; filter: drop-shadow(0 2px 8px rgb(4 12 10 / .5)); }
+}

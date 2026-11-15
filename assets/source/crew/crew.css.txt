@@ -1,0 +1,26 @@
+/* CREW: small workers. Walkers go out, turn round and come back; the digger and the foreman
+   swap between two poses. Each figure has a soft shadow falling to the right like the machines'. */
+.scene .crew { height: calc(22.25 * var(--s)); }
+.crew * { animation-play-state: var(--machines); }
+.crew b { position: absolute; inset: 0; transform-origin: 46.3% 50%; }
+.crew img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; }
+.crew img + img { opacity: 0; }
+.crew i { position: absolute; left: calc(6.3 * var(--s)); top: calc(18.3 * var(--s)); width: calc(16 * var(--s)); height: calc(4 * var(--s)); border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(38 20 6 / .6), rgb(38 20 6 / .28) 60%, rgb(38 20 6 / 0)); transform-origin: 0 50%; transform: rotate(7deg); }
+.walk { animation: lp-walk var(--t) linear var(--d) infinite; }
+.walk b { animation: lp-face var(--t) steps(1) var(--d) infinite; }
+.walk img { animation: lp-pose-a .84s steps(1) infinite; }            /* the two walking poses swap: one step each .42s */
+.walk img + img { animation-name: lp-pose-b; }
+.dig img { animation: lp-pose-a 2.6s steps(1) infinite; }
+.dig img + img { animation-name: lp-pose-b; }
+.chat img { animation: lp-pose-a 9s steps(1) -2s infinite; }
+.chat img + img { animation-name: lp-pose-b; }
+@keyframes lp-walk {
+  0%       { transform: translate(0, 0); }
+  46%, 50% { transform: translate(calc(var(--dx) * var(--s)), calc(var(--dy) * var(--s))); }
+  96%, 100% { transform: translate(0, 0); }
+}
+@keyframes lp-face { 0% { transform: scaleX(1); } 48% { transform: scaleX(-1); } 98% { transform: scaleX(1); } }
+@keyframes lp-pose-a { 0% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes lp-pose-b { 0% { opacity: 0; } 50% { opacity: 1; } }
+

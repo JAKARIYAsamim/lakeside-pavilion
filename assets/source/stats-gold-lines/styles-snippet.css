@@ -1,0 +1,15 @@
+/* The dividing lines are glowing gold: a bright warm core with a soft halo around it.
+   "--gold-core" is the line itself, "--gold-halo" the glow, "--gold-glow" how far the glow reaches (0px = no glow). */
+.stats { --pad: 16px; --gold-core: #FFE08A; --gold-deep: #E9B84A; --gold-halo: rgb(255 190 70 / .75); --gold-glow: 9px;
+  padding: 8px var(--pad) 48px; background: transparent; color: var(--paper); }
+.stats-row { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; }
+.stat { position: relative; padding: 24px 12px 22px 0; }
+.stat:nth-child(even) { padding-left: 18px; }
+/* the lines: across the top of the row, under each number (phones), and between the numbers */
+.stats-row::before, .stats-row::after, .stat::before, .stat::after { content: ""; position: absolute; pointer-events: none; box-shadow: 0 0 var(--gold-glow) var(--gold-halo), 0 0 calc(var(--gold-glow) * 2.6) rgb(255 190 70 / .28); }
+.stats-row::before, .stats-row::after, .stat::after { left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--gold-deep), var(--gold-core) 50%, var(--gold-deep)); }
+.stats-row::before { top: 0; }
+.stats-row::after { display: none; bottom: 0; }
+.stat::after { bottom: 0; }
+.stat::before { top: 0; bottom: 0; left: 0; width: 1px; background: linear-gradient(180deg, var(--gold-deep), var(--gold-core) 50%, var(--gold-deep)); display: none; }
+.stat:nth-child(even)::before { display: block; }

@@ -1,0 +1,24 @@
+/* ==========================================================================
+   PLANT SHADOWS (in the gallery section only, behind the pictures; it starts
+   below the number strip):
+   a soft pool of sunlight on the background with the shadows of palm fronds
+   and broad leaves in it. The picture is assets/window-light.svg (drawn by
+   assets/source/window-light.py). It sits in front of the dark background and
+   behind the numbers and pictures, and sways very slightly, like leaves in a
+   light breeze.
+   "--light" is how bright it is (0 = off), "--light-time" how slow the sway.
+   ========================================================================== */
+.dark-zone { --light: .1; --light-time: 11s; position: relative; overflow: hidden; background: var(--ink); isolation: isolate; }
+.dark-zone > section { position: relative; z-index: 1; background: transparent; }
+.window-light {
+  position: absolute; z-index: 0; inset: -3% -4%; pointer-events: none; opacity: var(--light);
+  background: url("../assets/window-light.svg") 50% 52% / cover no-repeat;
+  /* fades in from the top, so there is no edge where the dark area begins */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 26%); mask-image: linear-gradient(to bottom, transparent 0, #000 26%);
+  transform-origin: 0% 100%;
+  animation: lp-window-light var(--light-time) ease-in-out infinite alternate;
+}
+@keyframes lp-window-light { from { transform: rotate(-.5deg) translateX(-.4%); } to { transform: rotate(.6deg) translateX(.5%); } }
+@media (max-width: 899px) { .window-light { background-size: auto 100%; background-position: 34% 50%; } }
+@media (prefers-reduced-motion: reduce) { .window-light { animation: none; } }
+

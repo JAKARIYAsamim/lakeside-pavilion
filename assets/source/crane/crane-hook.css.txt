@@ -1,0 +1,14 @@
+/* crane: the hook sways on its cables and is slowly raised and lowered */
+.scene .m-rig { height: calc(96 * var(--s)); transform-origin: 46% 3%; animation: lp-sway 11s infinite; }
+.m-rig img { position: absolute; left: calc(var(--x) * var(--s)); top: calc(var(--y) * var(--s)); width: calc(var(--w) * var(--s)); height: auto; max-width: none; animation-play-state: var(--machines); }
+.m-cable { transform-origin: 50% 8%; animation: lp-cable 13s cubic-bezier(.45, 0, .55, 1) infinite; }
+.m-hook { animation: lp-hoist 13s cubic-bezier(.45, 0, .55, 1) infinite; }
+@keyframes lp-sway {
+  0%   { transform: rotate(0deg); animation-timing-function: ease-out; }
+  25%  { transform: rotate(1.7deg); animation-timing-function: ease-in-out; }
+  75%  { transform: rotate(-1.7deg); animation-timing-function: ease-in; }
+  100% { transform: rotate(0deg); }
+}
+@keyframes lp-hoist { 0%, 10% { transform: translateY(0); } 45%, 60% { transform: translateY(calc(-9 * var(--s))); } 95%, 100% { transform: translateY(0); } }
+@keyframes lp-cable { 0%, 10% { transform: scaleY(1); } 45%, 60% { transform: scaleY(.808); } 95%, 100% { transform: scaleY(1); } }
+

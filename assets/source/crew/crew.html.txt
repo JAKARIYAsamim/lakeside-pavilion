@@ -1,0 +1,8 @@
+        <!-- THE CREW: small workers (see CREW in css/styles.css). --x/--y place each one; for walkers
+             --dx/--dy is how far they walk (photo pixels) before turning back, --t the length of the round trip. -->
+        <span class="m crew walk" style="--x:553.6; --y:515.9; --w:13.9; --dx:128; --dy:-4; --t:38s; --d:-5s"><i></i><b><img src="assets/site/crew-walk-a.png" alt=""><img src="assets/site/crew-walk-b.png" alt=""></b></span>
+        <span class="m crew walk" style="--x:661.6; --y:564.9; --w:13.9; --dx:120; --dy:-6; --t:34s; --d:-21s"><i></i><b><img src="assets/site/crew-walk-a.png" alt=""><img src="assets/site/crew-walk-b.png" alt=""></b></span>
+        <span class="m crew walk" style="--x:855.6; --y:582.9; --w:13.9; --dx:146; --dy:1; --t:42s; --d:-12s"><i></i><b><img src="assets/site/crew-walk-a.png" alt=""><img src="assets/site/crew-walk-b.png" alt=""></b></span>
+        <span class="m crew dig" style="--x:591.6; --y:641.9; --w:13.9"><i></i><b><img src="assets/site/crew-dig-a.png" alt=""><img src="assets/site/crew-dig-b.png" alt=""></b></span>
+        <span class="m crew " style="--x:989.6; --y:658.9; --w:13.9"><i></i><b><img src="assets/site/crew-clip.png" alt=""></b></span>
+        <span class="m crew chat" style="--x:1002.6; --y:655.9; --w:13.9"><i></i><b><img src="assets/site/crew-point.png" alt=""><img src="assets/site/crew-clip.png" alt=""></b></span>

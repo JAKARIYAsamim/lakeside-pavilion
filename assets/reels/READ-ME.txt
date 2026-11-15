@@ -1,0 +1,5 @@
+Put the reel videos in this folder, named 01.mp4, 02.mp4, 03.mp4 and 04.mp4.
+Upright videos (9 wide by 16 tall, for example 1080 x 1920), MP4 with H.264 video.
+Each card on the page shows the picture with the same number (01.jpg ...) until its
+video is pressed; replace those pictures with a frame from each video.
+A card whose video file is missing shows "Video coming soon" instead of a play button.
