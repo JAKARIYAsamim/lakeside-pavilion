@@ -112,7 +112,7 @@
 
     <!-- EDIT: top-right text block (each <br> starts a new line) -->
     <p class="corner" data-move="corner-text">
-      Coming soon<br> to Purbachal,<br> Dhaka
+      Inspired by luxury.<br> Guided by halal values.
     </p>
 
     <!-- EDIT: the project name, second in size, under the right half of the big headline -->
@@ -158,7 +158,7 @@
 <div class="grain-zone">
 <section class="about" id="about" aria-labelledby="about-title">
   <!-- EDIT: the statement. Each <br> starts a new line; wrap words in <em> to make them italic serif. -->
-  <h2 class="about-statement" id="about-title">We are shaping <em>an address,</em> not just buildings. <br>A place defined by open water <br>and <em>a deep respect for the lake.</em></h2>
+  <h2 class="about-statement" id="about-title">Something remarkable is taking shape. <br>A new landmark. <em>A new possibility.</em> <br>A future you could be part of.</h2>
 
   <!-- round seal with turning text. EDIT: the words on the ring (keep them short). -->
   <svg class="about-seal" viewBox="0 0 120 120" role="img" aria-label="Lakeside Pavilion, Purbachal, Dhaka">
@@ -169,7 +169,7 @@
   </svg>
 
   <!-- EDIT: short paragraph -->
-  <p class="about-body">Lakeside Pavilion is taking shape on the lakefront in Purbachal, Dhaka. Plans, sizes and dates are still being finalised and will be announced soon.</p>
+  <p class="about-body">Something exceptional is coming to Purbachal, Dhaka. Inspired by timeless elegance and guided by halal principles, a new destination is being envisioned where world-class hospitality, refined lifestyles and meaningful investment opportunities come together. A vision that brings extraordinary possibilities within reach.<span class="about-soon">To be unveiled soon.</span></p>
   <p class="about-stars" aria-hidden="true">* * *</p>
 
   <!-- TRUST STRIP: a slowly moving row of approvals, memberships and partners, shown as names.
@@ -199,9 +199,17 @@
   <!-- EDIT: headline. It sits BEHIND the picture, so the scroll and the sleeve pass in front of it. -->
   <!-- The price counts down when the section is first seen: data-from is where it starts, data-count where it lands
        (keep the text inside the same as data-count), data-delay and data-length are milliseconds. -->
-  <h2 class="deed-title" id="deed-title">With only <span class="deed-price">&#2547;<span data-count="10000" data-from="99999" data-delay="750" data-length="2400">10,000</span></span> <br>you can be <br class="deed-br"><em>a property owner.</em></h2>
+  <h2 class="deed-title" id="deed-title">A new destination <span class="nw">for luxury</span> <br>and halal investment. <br><em>Starting from</em> <span class="deed-price">&#2547;<span data-count="10000" data-from="99999" data-delay="750" data-length="2400">10,000</span></span></h2>
   <!-- the picture in three pieces, so the hands can move a little: the field, the hand with the scroll, the open hand -->
-  <div class="deed-scene" role="img" aria-label="A hand in a suit passes a rolled document tied with a ribbon to an open hand, above a green field.">
+  <!-- The family photo replaces the hands for now. assets/family-park-cut.webp = the park photo with the trees, sky and
+       far lawn cut away (transparent), so the headline shows above the lawn and passes BEHIND the family's heads.
+       Made by tools/cut-park-smooth.py (one smooth lawn edge) from assets/source/family-park.png. The earlier photo (with the planter) is
+       assets/family-picnic-cut.webp: swap the file name below to go back to it. -->
+  <div class="deed-photo">
+    <img src="assets/family-park-cut.webp" width="1672" height="941" loading="lazy" alt="A family relaxing on a picnic blanket on a park lawn at golden hour, a little girl holding up a sprig of flowers.">
+  </div>
+  <!-- The hands picture is HIDDEN, not removed: delete the word "hidden" below (and the .deed-photo block above) to bring it back. -->
+  <div hidden class="deed-scene" role="img" aria-label="A hand in a suit passes a rolled document tied with a ribbon to an open hand, above a green field.">
     <img class="deed-field" src="assets/handover-field.webp" width="1672" height="701" loading="lazy" alt="">
     <img class="deed-hand deed-hand-l" src="assets/handover-left.webp" width="1732" height="701" loading="lazy" alt="">
     <img class="deed-hand deed-hand-r" src="assets/handover-right.webp" width="1732" height="701" loading="lazy" alt="">
@@ -262,6 +270,14 @@
   <!-- EDIT: headline (words inside <em> are shown in gold) -->
   <h2 class="reels-title" id="reels-title">See it <em>in motion.</em></h2>
   <ul class="reels-row">
+    <!-- ONE FILM (2026-11-20): assets/film/lakeside-film.mp4 (1080p web copy of Lakeside_Pavilion_TV_Loop_Final_v3.mp4)
+         with assets/film/lakeside-film.jpg as its cover. Press it to play with sound; press again to pause. -->
+    <li class="reel reel-film" data-reel>
+      <video src="assets/film/lakeside-film.mp4" poster="assets/film/lakeside-film.jpg" preload="metadata" playsinline loop aria-label="Lakeside Pavilion: the film"></video>
+      <button class="reel-play" type="button" aria-label="Play: Lakeside Pavilion, the film"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
+      <p class="reel-name">Lakeside Pavilion, the film</p>
+    </li>
+    <!-- The four upright reels that were here before (no video files yet). To bring them back, move them out of this comment.
     <li class="reel" data-reel>
       <video src="assets/reels/01.mp4" poster="assets/reels/01.jpg" preload="none" playsinline loop aria-label="The pavilion and promenade on the lake front"></video>
       <button class="reel-play" type="button" aria-label="Play: The lake front"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
@@ -282,6 +298,7 @@
       <button class="reel-play" type="button" aria-label="Play: The setting"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
       <p class="reel-name">The setting</p>
     </li>
+    -->
   </ul>
 </section>
 </div>
@@ -322,6 +339,16 @@
         <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.500 5.500a2 2 0 0 1 2-2z"/></svg><span>+880 0000 000000</span></li>
         <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.500-6.200-6.500-11a6.500 6.500 0 0 1 13 0c0 4.800-6.500 11-6.500 11z"/><circle cx="12" cy="10" r="2.300"/></svg><span>Purbachal, Dhaka</span></li>
       </ul>
+      <!-- SOCIAL LINKS. EDIT: put each page's real address in href (they are "#" placeholders). Delete a line to drop a network. -->
+      <ul class="foot-social">
+        <li><a href="#" aria-label="Lakeside Pavilion on Facebook" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 21v-7h2.6l.4-3.2h-3V8.9c0-.9.3-1.6 1.6-1.6h1.6V4.5a20 20 0 0 0-2.4-.1c-2.4 0-4 1.4-4 4.1v2.3H8.6V14h2.7v7"/></svg></a></li>
+        <li><a href="#" aria-label="Lakeside Pavilion on Instagram" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.8" y="3.8" width="16.4" height="16.4" rx="4.8"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.1" cy="6.9" r=".9" fill="currentColor" stroke="none"/></svg></a></li>
+        <li><a href="#" aria-label="Lakeside Pavilion on YouTube" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5.8" width="19" height="12.4" rx="3.6"/><path d="M10.2 9.3v5.4l4.6-2.7z" fill="currentColor"/></svg></a></li>
+        <li><a href="#" aria-label="Lakeside Pavilion on LinkedIn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M8 10.5v6M8 7.4v.2M11.6 16.5v-6M11.6 13.4c0-1.7 1.1-2.9 2.6-2.9s2.2 1 2.2 2.7v3.3"/></svg></a></li>
+        <li><a href="#" aria-label="Lakeside Pavilion on X" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 4.5h4.2l10.8 15h-4.2zM19.2 4.5l-5.9 6.6M10.7 12.9l-5.9 6.6"/></svg></a></li>
+        <li><a href="#" aria-label="Lakeside Pavilion on TikTok" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.8 3.8v11.1a3.4 3.4 0 1 1-3.4-3.4"/><path d="M13.8 3.8c.3 2.6 2.1 4.4 4.9 4.6"/></svg></a></li>
+        <li><a href="#" aria-label="Lakeside Pavilion on WhatsApp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.3 19.7l1.1-3.9a8.2 8.2 0 1 1 3.1 3z"/><path d="M9.3 8.4c-.3 3.3 3 6.6 6.3 6.3l.8-1.4-1.9-1-.9.8a4.6 4.6 0 0 1-2.1-2.1l.8-.9-1-1.9z"/></svg></a></li>
+      </ul>
     </div>
     <nav class="foot-col" aria-label="Project">
       <h3>Project</h3>
@@ -341,6 +368,8 @@
       <a href="#top">Countdown</a>
       <a hidden href="#soon">Opening soon</a>
       <a href="#top" data-focus-email>Register interest</a>
+      <!-- opens the form on a page of its own (register.html) -->
+      <a href="register.html">Registration form</a>
     </nav>
     <div class="foot-news">
       <h3>Stay informed</h3>
@@ -368,6 +397,30 @@
   </div>
 </footer>
 </div>
+<!-- REGISTER INTEREST FORM: a pop-up that opens from every "Register interest", "Notify me" and "Be the first to know" button.
+     EDIT: the title, line and choices. The form is NOT connected yet: see "Register interest form" in js/main.js. -->
+<dialog class="ri" id="register" aria-labelledby="ri-title">
+  <form class="ri-form" id="ri-form" novalidate>
+    <span class="ri-fx" aria-hidden="true"><i class="ri-light"></i><i class="ri-grain"></i></span>
+    <button class="ri-close" type="button" aria-label="Close" data-ri-close><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <h2 class="ri-title" id="ri-title"><span class="ri-w">Register your</span> <em class="ri-w">interest</em></h2>
+
+    <div class="ri-grid">
+      <label class="ri-field"><span>Name</span>
+        <input name="name" type="text" autocomplete="name" required placeholder="Your name"></label>
+      <label class="ri-field"><span>Phone Number</span>
+        <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="+880 1XXX-XXXXXX"></label>
+      <label class="ri-field"><span>Email</span>
+        <input name="email" type="email" inputmode="email" autocomplete="email" required placeholder="name@example.com"></label>
+    </div>
+
+    <div class="ri-foot">
+      <button class="ri-submit" type="submit"><span class="ri-submit-text">Register interest</span><span class="ri-submit-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+      <p class="ri-note" id="ri-note" role="status" aria-live="polite"></p>
+    </div>
+  </form>
+</dialog>
+
 <script src="js/main.js"></script>
 <script>if (LP_EDIT) { var s = document.createElement('script'); s.src = 'js/edit.js'; document.body.appendChild(s); }</script>
 </body>

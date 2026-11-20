@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Register Interest | Lakeside Pavilion</title>
+  <meta name="description" content="Register your interest in Lakeside Pavilion, Purbachal. Leave your name, phone number and email and we will be in touch.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/register.css">
+</head>
+<!-- REGISTER PAGE: the same "Register your interest" form as the pop-up on the main page, on a page of its own.
+     It is linked from the footer of index.html ("Registration form").
+     EDIT: the title and the line under it. The form is NOT connected yet: see js/register.js. -->
+<body class="rp">
+  <div class="rp-bg" aria-hidden="true"></div>
+
+  <header class="rp-top">
+    <a class="rp-mark" href="index.html" aria-label="Lakeside Pavilion home"><img src="assets/logo-white.png" width="480" height="428" alt=""></a>
+    <a class="rp-back" href="index.html"><span aria-hidden="true">&larr;</span> Back to the site</a>
+  </header>
+
+  <main class="rp-main">
+    <div class="ri rp-card" open>
+      <form class="ri-form" id="ri-form" novalidate>
+        <span class="ri-fx" aria-hidden="true"><i class="ri-light"></i><i class="ri-grain"></i></span>
+        <p class="ri-kicker"><i></i>Lakeside Pavilion · Purbachal</p>
+        <h1 class="ri-title" id="ri-title"><span class="ri-w">Register your</span> <em class="ri-w">interest</em></h1>
+        <!-- EDIT: the line under the title -->
+        <p class="ri-lead">Leave your details and our team will reach you first with prices, plans and the launch date.</p>
+
+        <div class="ri-grid">
+          <label class="ri-field"><span>Name</span>
+            <input name="name" type="text" autocomplete="name" required placeholder="Your name"></label>
+          <label class="ri-field"><span>Phone Number</span>
+            <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="+880 1XXX-XXXXXX"></label>
+          <label class="ri-field"><span>Email</span>
+            <input name="email" type="email" inputmode="email" autocomplete="email" required placeholder="name@example.com"></label>
+        </div>
+
+        <div class="ri-foot">
+          <button class="ri-submit" type="submit"><span class="ri-submit-text">Register interest</span><span class="ri-submit-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+          <p class="ri-note" id="ri-note" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <p class="rp-base">&copy; 2026 Lakeside Pavilion. All rights reserved.</p>
+
+  <script src="js/register.js"></script>
+</body>
+</html>

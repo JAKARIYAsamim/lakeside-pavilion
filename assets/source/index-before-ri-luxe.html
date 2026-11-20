@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lakeside Pavilion | Coming Soon</title>
+  <meta name="description" content="Lakeside Pavilion is coming soon to Purbachal, Dhaka. Leave your email to hear first.">
+  <link rel="preload" href="assets/fonts/InterDisplay-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/InterDisplay-Medium.woff" as="font" type="font/woff" crossorigin>
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Opening animation: holds the text back until js/main.js starts it. Skipped for visitors who turn motion off. -->
+  <script>
+    var LP_EDIT = /[?&]edit\b/.test(location.search);   /* edit mode: add ?edit to the address (see js/edit.js) */
+    if (LP_EDIT) document.documentElement.className += ' lp-edit';
+    else if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.className += ' intro-wait';
+  </script>
+</head>
+<body>
+
+<main class="hero" id="top">
+  <div class="frame">
+
+    <!-- LAYER 1: the photo (blur on the surroundings and film grain are part of this file) with the moving machines on top -->
+    <div class="photo">
+      <div class="scene">
+        <img class="plate" src="assets/bg.jpg" width="1672" height="941"
+             alt="Aerial view of the project site beside a lake at sunset, marked by a large red location pin.">
+
+        <!-- THE PIN (see PIN DROP in css/styles.css). The photo itself has no pin: it is a separate piece that
+             drops in once during the opening animation. Order here: its shadow, the two ground rings, the dust
+             puffs, then the pin itself (phones; on desktop the pin cut-out further down is used instead). -->
+        <img class="m pin-shadow" src="assets/site/pin-shadow.png" alt="" style="--x:788; --y:482; --w:410">
+        <i class="pin-ring" style="--x:820; --y:548"></i>
+        <i class="pin-ring pin-ring-2" style="--x:820; --y:548"></i>
+        <i class="dust pin-dust pin-dust-l" style="--x:776; --y:530; --w:52"></i>
+        <i class="dust pin-dust pin-dust-r" style="--x:812; --y:532; --w:52"></i>
+        <img class="pin-top" src="assets/pin.webp" alt="">
+
+        <!-- TRAFFIC: cars cut out of the photo, driving along the two roads (see TRAFFIC in css/styles.css).
+             --fx/--tx (and --fy/--ty) are where each car starts and ends, in photo pixels from its resting place;
+             --t is the length of its loop and --d shifts when it starts. -->
+        <img class="m car" src="assets/site/car2.png" alt="" style="--x:520; --y:703; --w:36; --fx:920; --tx:-235; --flip:1; --t:46s; --d:-33s">
+        <img class="m car" src="assets/site/car3.png" alt="" style="--x:709; --y:702; --w:35; --fx:731; --tx:-424; --flip:1; --t:46s; --d:-17s">
+        <img class="m car" src="assets/site/car4.png" alt="" style="--x:1270; --y:702; --w:28; --fx:170; --tx:-985; --flip:1; --t:46s; --d:-4s">
+        <img class="m car" src="assets/site/car3.png" alt="" style="--x:429; --y:716; --w:35; --fx:-144; --tx:1011; --flip:-1; --t:54s; --d:-7s">
+        <img class="m car" src="assets/site/car2.png" alt="" style="--x:930; --y:716; --w:36; --fx:-645; --tx:510; --flip:-1; --t:54s; --d:-31s">
+        <img class="m car car-gap" src="assets/site/car5.png" alt="" style="--x:1297; --y:603; --w:24; --fx:67.8; --fy:77; --tx:-37.8; --ty:-43; --fs:1.154; --ts:0.914; --t:13s; --d:-2s">
+        <img class="m car car-gap" src="assets/site/car6.png" alt="" style="--x:1349; --y:653; --w:29; --fx:-73.3; --fy:-89; --tx:32.3; --ty:31; --fs:0.822; --ts:1.062; --t:17s; --d:-6s">
+        <img class="m car car-gap" src="assets/site/car7.png" alt="" style="--x:1363; --y:664; --w:36; --fx:-87.4; --fy:-105; --tx:18.2; --ty:15; --fs:0.790; --ts:1.030; --t:23s; --d:-15s">
+        <!-- the palms and hedges in front of the roads, so cars pass behind them -->
+        <img class="m" src="assets/site/trees-front.png" alt="" style="--x:250; --y:703; --w:1200">
+        <img class="m" src="assets/site/trees-right.png" alt="" style="--x:1240; --y:560; --w:180">
+
+        <!-- THE WORKING MACHINES: cut-outs that sit on the photo and move (see MACHINES in css/styles.css).
+             --x / --y / --w are each piece's position and width in photo pixels. -->
+        <img class="m m-loader" src="assets/site/loader.png" alt="" style="--x:566; --y:466; --w:129">
+        <i class="dust dust-loader" style="--x:572; --y:494; --w:22"></i>
+        <img class="m m-stick" src="assets/site/stick.png" alt="" style="--x:603; --y:553; --w:48">
+        <i class="dust dust-dig" style="--x:612; --y:612; --w:30"></i>
+        <div class="m m-rig" style="--x:990; --y:379; --w:24">
+          <img class="m-cable" src="assets/site/cable.png" alt="" style="--x:2; --y:0; --w:22">
+          <img class="m-hook" src="assets/site/hook.png" alt="" style="--x:0; --y:40; --w:24">
+        </div>
+        <!-- dump truck: the bed tips up and the soil pours out behind it -->
+        <div class="m m-tip" style="--x:1018; --y:594; --w:178">
+          <img class="t-base" src="assets/site/truck-base.png" alt="" style="--x:0; --y:0; --w:178">
+          <i class="t-ram" style="--x:66; --y:36.4"></i>
+          <div class="t-bed" style="--x:31; --y:1; --w:91">
+            <img src="assets/site/truck-bed.png" alt="">
+            <div class="t-load"><img src="assets/site/truck-load.png" alt=""></div>
+          </div>
+          <div class="t-stream" style="--x:110; --y:19; --w:22"><i></i><i></i><i></i><i></i><i></i></div>
+          <img class="t-pile" src="assets/site/soil-pile.png" alt="" style="--x:96; --y:18; --w:63">
+        </div>
+        <i class="dust dust-truck" style="--x:1130; --y:612; --w:40"></i>
+
+      </div>
+    </div>
+
+    <!-- LAYER 2: the giant project name. It sits behind the pin. -->
+    <!-- EDIT: the big headline. Each "gl" is one line and each "gw" is one word. A word marked "hi" is a key word and is
+         shown at the full size (the other words are smaller). -->
+    <h1 class="giant" aria-label="The biggest investment opportunity in Purbachal">
+      <span class="w1" data-move="name-lakeside" aria-hidden="true"><span class="gl"><span class="gw">THE</span> <span class="gw hi">BIGGEST</span></span><span class="gl"><span class="gw hi">INVESTMENT</span></span></span>
+      <span class="w2" data-move="name-pavilion" aria-hidden="true"><span class="gl"><span class="gw">OPPORTUNITY</span></span><span class="gl"><span class="gw">IN</span> <span class="gw hi">PURBACHAL</span></span></span>
+    </h1>
+
+    <!-- LAYER 3: the pin, in front of the name. It drops in during the opening animation. -->
+    <img class="pin" src="assets/pin.webp" width="1672" height="941" alt="">
+
+    <!-- MENU ROW -->
+    <header class="nav">
+      <!-- EDIT: replace the "LP" text with your logo, e.g. <img src="assets/logo.svg" alt="Lakeside Pavilion"> -->
+      <a class="mark" data-move="logo" href="#top" aria-label="Lakeside Pavilion home"><img src="assets/logo-white.png" width="480" height="428" alt=""></a>
+
+      <!-- EDIT: menu links. Change the words and point each href at a real page or section. -->
+      <nav class="links" data-move="menu" aria-label="Main">
+        <a href="#about">Overview</a>
+        <a href="#offer">Ownership</a>
+        <a href="#films">Films</a>
+        <a hidden href="#gallery">Gallery</a>
+        <a href="#footer">Contact</a>
+      </nav>
+
+      <a class="contact" data-move="register-button" href="#notify" data-focus-email>
+        Register interest
+        <span class="dot" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </span>
+      </a>
+    </header>
+
+    <!-- EDIT: top-right text block (each <br> starts a new line) -->
+    <p class="corner" data-move="corner-text">
+      Inspired by luxury.<br> Guided by halal values.
+    </p>
+
+    <!-- EDIT: the project name, second in size, under the right half of the big headline -->
+    <p class="tag" data-move="tagline">Lakeside<br>Pavilion</p>
+
+    <!-- EDIT: main button -->
+    <a class="cta" data-move="notify-button" href="#notify" data-focus-email>Notify me</a>
+
+    <!-- COUNTDOWN to the launch. EDIT: data-launch is the launch date and time, written year-month-dayThour:minute
+         with +06:00 for Dhaka time. THE DATE BELOW IS A PLACEHOLDER: put the real one in. When the moment has
+         passed, the countdown is replaced by the words in data-done. -->
+    <div class="count" data-move="countdown" data-launch="2027-01-01T10:00:00+06:00" data-done="Now open" role="timer" aria-label="Time until launch">
+      <div class="count-in">
+        <p class="count-cell"><span class="count-num" data-unit="d">00</span><span class="count-unit">Days</span></p>
+        <p class="count-cell"><span class="count-num" data-unit="h">00</span><span class="count-unit">Hours</span></p>
+        <p class="count-cell"><span class="count-num" data-unit="m">00</span><span class="count-unit">Minutes</span></p>
+        <p class="count-cell"><span class="count-num" data-unit="s">00</span><span class="count-unit">Seconds</span></p>
+      </div>
+    </div>
+
+    <!-- SIGN-UP CARD. The form is not connected to anything yet: see js/main.js. -->
+    <form class="card" data-move="signup-card" id="notify" novalidate>
+      <p class="big">Be first</p>
+      <label for="email">to hear when we launch. Leave your email.</label>
+      <div class="row">
+        <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Email address">
+        <button class="send" id="send" type="submit" aria-label="Notify me">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </button>
+      </div>
+      <p class="note" id="note" role="status" aria-live="polite"></p>
+    </form>
+
+  </div>
+  <!-- fills the rest of the screen with lake water when the window is taller than the photo -->
+  <div class="hero-water" aria-hidden="true"><div></div></div>
+</main>
+
+<!-- ABOUT SECTION: light editorial layout. One big statement (the words inside <em> are set
+     in italic serif), a round seal and a short paragraph. All wording is placeholder. -->
+<!-- GRAIN ZONE: everything from here to the end of the footer has a fine film grain laid over the top of it
+     (GRAIN OVER EVERYTHING in css/styles.css). -->
+<div class="grain-zone">
+<section class="about" id="about" aria-labelledby="about-title">
+  <!-- EDIT: the statement. Each <br> starts a new line; wrap words in <em> to make them italic serif. -->
+  <h2 class="about-statement" id="about-title">Something remarkable is taking shape. <br>A new landmark. <em>A new possibility.</em> <br>A future you could be part of.</h2>
+
+  <!-- round seal with turning text. EDIT: the words on the ring (keep them short). -->
+  <svg class="about-seal" viewBox="0 0 120 120" role="img" aria-label="Lakeside Pavilion, Purbachal, Dhaka">
+    <defs><path id="seal-ring" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0"/></defs>
+    <g class="about-seal-text"><text><textPath href="#seal-ring" textLength="270">LAKESIDE PAVILION &#8226; PURBACHAL &#8226; DHAKA &#8226;</textPath></text></g>
+    <path class="about-seal-mark" d="M60 43c-7.2 0-13 5.6-13 12.6C47 65.5 60 79 60 79s13-13.5 13-23.4C73 48.6 67.2 43 60 43z"/>
+    <circle class="about-seal-mark" cx="60" cy="55.5" r="4.6"/>
+  </svg>
+
+  <!-- EDIT: short paragraph -->
+  <p class="about-body">Something exceptional is coming to Purbachal, Dhaka. Inspired by timeless elegance and guided by halal principles, a new destination is being envisioned where world-class hospitality, refined lifestyles and meaningful investment opportunities come together. A vision that brings extraordinary possibilities within reach.<span class="about-soon">To be unveiled soon.</span></p>
+  <p class="about-stars" aria-hidden="true">* * *</p>
+
+  <!-- TRUST STRIP: a slowly moving row of approvals, memberships and partners, shown as names.
+       CHECK EVERY NAME BEFORE LAUNCH: keep only the ones this project really holds and delete the rest.
+       EDIT: change the words inside <span>. To show a logo instead of a name, swap the whole line for
+         <li class="trust-item"><img src="assets/trust/your-logo.svg" alt="Name of the organisation"></li>
+       Add or remove lines freely; js/main.js repeats the row so it loops without a gap. -->
+  <div class="trust" id="approvals" aria-label="Approvals and partners">
+    <ul class="trust-track">
+      <li class="trust-item"><img src="assets/trust/gov-seal.png" width="77" height="78" alt=""><span>RAJUK approved plan</span></li>
+      <li class="trust-item"><img src="assets/trust/rehab.png" width="403" height="60" alt="REHAB member"></li>
+      <li class="trust-item"><img src="assets/trust/bnbc.png" width="485" height="204" alt="BNBC compliant"></li>
+      <li class="trust-item"><img src="assets/trust/fire-service.png" width="316" height="316" alt="Fire Service &amp; Civil Defence clearance"></li>
+      <li class="trust-item"><img src="assets/trust/doe.png" width="861" height="177" alt="Department of Environment clearance"></li>
+    </ul>
+  </div>
+
+  <!-- bottom-left round button: back to the top -->
+  <a class="about-btn about-up" href="#top" aria-label="Back to top"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+</section>
+
+<!-- OWNERSHIP OFFER: a big headline partly behind the handover picture, then one line and a button. The sky is cut out of the
+     picture, so the page colour shows behind the hands; the grass fades into the dark section below.
+     EDIT: the headline (words inside <em> are italic serif), the line under it and the button words.
+     The picture is assets/handover-field.webp, -left.webp and -right.webp (whole picture: assets/handover.webp). -->
+<section class="deed" id="offer" aria-labelledby="deed-title">
+  <!-- EDIT: headline. It sits BEHIND the picture, so the scroll and the sleeve pass in front of it. -->
+  <!-- The price counts down when the section is first seen: data-from is where it starts, data-count where it lands
+       (keep the text inside the same as data-count), data-delay and data-length are milliseconds. -->
+  <h2 class="deed-title" id="deed-title">A new destination <span class="nw">for luxury</span> <br>and halal investment. <br><em>Starting from</em> <span class="deed-price">&#2547;<span data-count="10000" data-from="99999" data-delay="750" data-length="2400">10,000</span></span></h2>
+  <!-- the picture in three pieces, so the hands can move a little: the field, the hand with the scroll, the open hand -->
+  <div class="deed-scene" role="img" aria-label="A hand in a suit passes a rolled document tied with a ribbon to an open hand, above a green field.">
+    <img class="deed-field" src="assets/handover-field.webp" width="1672" height="701" loading="lazy" alt="">
+    <img class="deed-hand deed-hand-l" src="assets/handover-left.webp" width="1732" height="701" loading="lazy" alt="">
+    <img class="deed-hand deed-hand-r" src="assets/handover-right.webp" width="1732" height="701" loading="lazy" alt="">
+  </div>
+  <div class="deed-foot">
+    <!-- EDIT: the button words -->
+    <a class="deed-btn" href="#top" data-focus-email>Register interest <span aria-hidden="true"></span></a>
+  </div>
+</section>
+
+<!-- DARK AREA: the number strip and the gallery share one dark background. -->
+<div class="dark-zone">
+
+<!-- NUMBER STRIP: four big numbers in one row, after the ownership offer and before the gallery.
+     They count up once when the strip scrolls into view (js/main.js).
+     EDIT: these four are SAMPLE numbers, not real ones. Put the project's true figures in: data-count is
+     the number (keep the text inside the <span> the same), then the sign after it, then the caption. -->
+<!-- HIDDEN FOR NOW: the word "hidden" below keeps this section off the page. Delete that one word to show it again. -->
+<section hidden class="stats" id="numbers" aria-label="Lakeside Pavilion in numbers">
+  <ul class="stats-row">
+    <li class="stat"><p class="stat-num"><span data-count="12">12</span>+</p><p class="stat-label">Acres on the lakefront</p></li>
+    <li class="stat"><p class="stat-num"><span data-count="240">240</span>+</p><p class="stat-label">Residences planned</p></li>
+    <li class="stat"><p class="stat-num"><span data-count="30">30</span>+</p><p class="stat-label">Amenities and shared spaces</p></li>
+    <li class="stat"><p class="stat-num"><span data-count="15">15</span>+</p><p class="stat-label">Years of building in Dhaka</p></li>
+  </ul>
+</section>
+
+
+<!-- GALLERY: pictures on a curved wall that turns slowly, shown as a mosaic of big pixels until launch;
+     drag it to turn it by hand (js/main.js).
+     EDIT: replace the files in assets/gallery/ (upright pictures, 3 wide by 4 tall) and the words in alt="".
+     Keep at least 8 pictures so the wall has no gap. (With 24 or more, the wall becomes three rows.) -->
+<!-- HIDDEN FOR NOW: the word "hidden" below keeps this section off the page. Delete that one word to show it again. -->
+<section hidden class="gallery" id="gallery" aria-labelledby="gallery-title">
+  <div class="arc-glass">
+  <ul class="arc" aria-label="Project pictures, kept blurred until launch">
+    <li class="arc-card"><img src="assets/gallery/01.jpg" alt="The round pavilion on the lake front, beside the site" loading="lazy" draggable="false"></li>
+    <li class="arc-card"><img src="assets/gallery/02.jpg" alt="Homes and a playing field along a palm-lined road" loading="lazy" draggable="false"></li>
+    <li class="arc-card"><img src="assets/gallery/03.jpg" alt="A clubhouse among trees and gardens" loading="lazy" draggable="false"></li>
+    <li class="arc-card"><img src="assets/gallery/04.jpg" alt="The site and its crane, with green country beyond" loading="lazy" draggable="false"></li>
+    <li class="arc-card"><img src="assets/gallery/05.jpg" alt="The lake front road and the water" loading="lazy" draggable="false"></li>
+    <li class="arc-card"><img src="assets/gallery/06.jpg" alt="A fountain in the lake below tree-lined streets" loading="lazy" draggable="false"></li>
+    <li class="arc-card"><img src="assets/gallery/07.jpg" alt="A landscaped corner by the lake" loading="lazy" draggable="false"></li>
+    <li class="arc-card"><img src="assets/gallery/08.jpg" alt="The wide green country around the site at sunset" loading="lazy" draggable="false"></li>
+  </ul>
+    <!-- EDIT: the words over the gallery (words inside <em> are italic serif, in gold) -->
+    <div class="gallery-note">
+      <h2 class="gallery-note-title" id="gallery-title"><em>Revealed at launch.</em></h2>
+    </div>
+  </div>
+</section>
+
+<!-- REELS: upright videos, like phone reels. Pressing a card plays its video with sound and stops the others.
+     EDIT: put the videos in assets/reels/ as 01.mp4 ... 04.mp4 (see READ-ME.txt there) and change the names
+     in <p class="reel-name">. Add or delete <li> blocks to change how many there are. A card whose video
+     file is missing shows "Video coming soon". -->
+<section class="reels" id="films" aria-labelledby="reels-title">
+  <!-- EDIT: headline (words inside <em> are shown in gold) -->
+  <h2 class="reels-title" id="reels-title">See it <em>in motion.</em></h2>
+  <ul class="reels-row">
+    <li class="reel" data-reel>
+      <video src="assets/reels/01.mp4" poster="assets/reels/01.jpg" preload="none" playsinline loop aria-label="The pavilion and promenade on the lake front"></video>
+      <button class="reel-play" type="button" aria-label="Play: The lake front"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
+      <p class="reel-name">The lake front</p>
+    </li>
+    <li class="reel" data-reel>
+      <video src="assets/reels/02.mp4" poster="assets/reels/02.jpg" preload="none" playsinline loop aria-label="Homes and green space along palm-lined roads"></video>
+      <button class="reel-play" type="button" aria-label="Play: The neighbourhood"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
+      <p class="reel-name">The neighbourhood</p>
+    </li>
+    <li class="reel" data-reel>
+      <video src="assets/reels/03.mp4" poster="assets/reels/03.jpg" preload="none" playsinline loop aria-label="The avenue leading to the site"></video>
+      <button class="reel-play" type="button" aria-label="Play: Getting there"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
+      <p class="reel-name">Getting there</p>
+    </li>
+    <li class="reel" data-reel>
+      <video src="assets/reels/04.mp4" poster="assets/reels/04.jpg" preload="none" playsinline loop aria-label="The wide green country around the site at sunset"></video>
+      <button class="reel-play" type="button" aria-label="Play: The setting"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
+      <p class="reel-name">The setting</p>
+    </li>
+  </ul>
+</section>
+</div>
+
+<!-- CLOSING SECTION: "a new door is opening soon", with the gold door that opens (assets/doors-gold.jpg +
+     assets/doors-gold-front.webp). EDIT: the headline and the button words. -->
+<!-- HIDDEN FOR NOW: the word "hidden" below keeps this section off the page. Delete that one word to show it again. -->
+<section hidden class="door" id="soon" data-look="gold" aria-labelledby="door-title">
+  <!-- three layers: the picture, the headline, then the open door again on top, so the headline passes BEHIND the door -->
+  <img class="door-photo door-layer look-gold" src="assets/doors-gold.jpg" width="1672" height="941" loading="lazy" alt="A gold door in a dark room, standing slightly open, with warm light spilling through the gap onto the floor.">
+  <!-- EDIT: headline, in two lines (the <br> starts the second line; words inside <em> are shown in gold) -->
+  <h2 class="door-title" id="door-title">A new door <br><em>is opening soon.</em></h2>
+  <img class="door-front door-layer look-gold" src="assets/doors-gold-front.webp" width="1672" height="941" loading="lazy" alt="">
+  <!-- gold look only: the door that opens. Light behind, two leaves that swing inward, and the light on the floor.
+       It sits exactly over the doorway in the picture (the numbers are in the DOOR OPENS part of css/styles.css). -->
+  <div class="door-stage look-gold" aria-hidden="true">
+    <div class="door-spill"></div>
+    <div class="door-way">
+      <div class="door-leaf door-leaf-l"></div>
+      <div class="door-leaf door-leaf-r"></div>
+    </div>
+  </div>
+  <div class="door-foot">
+    <a class="door-btn" href="#top" data-focus-email>Be the first to know <span aria-hidden="true"></span></a>
+  </div>
+</section>
+
+<!-- FOOTER: the name and contact details, three columns of links, an email box, a large countdown, and the
+     small print. EDIT: the words and links. THE EMAIL ADDRESS AND PHONE NUMBER ARE PLACEHOLDERS:
+     put the real ones in. -->
+<footer class="foot" id="footer">
+  <div class="foot-cols">
+    <div class="foot-brand">
+      <p class="foot-mark">Lakeside Pavilion</p>
+      <p class="foot-tag">A new address by the lake, taking shape in Purbachal.</p>
+      <ul class="foot-contact">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="1.5"/><path d="M3.5 7l8.5 6.5L20.5 7"/></svg><a href="mailto:email@example.com">email@example.com</a></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.500 5.500a2 2 0 0 1 2-2z"/></svg><span>+880 0000 000000</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.500-6.200-6.500-11a6.500 6.500 0 0 1 13 0c0 4.800-6.500 11-6.500 11z"/><circle cx="12" cy="10" r="2.300"/></svg><span>Purbachal, Dhaka</span></li>
+      </ul>
+    </div>
+    <nav class="foot-col" aria-label="Project">
+      <h3>Project</h3>
+      <a href="#about">Overview</a>
+      <a href="#offer">Ownership</a>
+      <a hidden href="#gallery">Gallery</a>
+      <a href="#films">Films</a>
+    </nav>
+    <nav class="foot-col" aria-label="Company">
+      <h3>Company</h3>
+      <a href="#about">About us</a>
+      <a href="#approvals">Approvals</a>
+      <a hidden href="#numbers">In numbers</a>
+    </nav>
+    <nav class="foot-col" aria-label="Launch">
+      <h3>Launch</h3>
+      <a href="#top">Countdown</a>
+      <a hidden href="#soon">Opening soon</a>
+      <a href="#top" data-focus-email>Register interest</a>
+    </nav>
+    <div class="foot-news">
+      <h3>Stay informed</h3>
+      <p>Be the first to hear when the door opens.</p>
+      <form class="foot-form" id="foot-notify" novalidate>
+        <input type="email" id="foot-email" placeholder="Enter your email" aria-label="Email address" autocomplete="email">
+        <button type="submit" aria-label="Send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+      </form>
+      <p class="foot-note" id="foot-note" role="status"></p>
+    </div>
+  </div>
+  <!-- the countdown again, large. It reads the launch date from the countdown in the hero (data-launch there),
+       so there is only one date to change. -->
+  <div class="foot-count" data-count-follow role="timer" aria-label="Time until launch">
+    <p class="fc-cell"><span class="fc-num" data-unit="d">00</span><span class="fc-unit">Days</span></p>
+    <p class="fc-cell"><span class="fc-num" data-unit="h">00</span><span class="fc-unit">Hours</span></p>
+    <p class="fc-cell"><span class="fc-num" data-unit="m">00</span><span class="fc-unit">Minutes</span></p>
+    <p class="fc-cell"><span class="fc-num" data-unit="s">00</span><span class="fc-unit">Seconds</span></p>
+  </div>
+  <!-- gold button under the countdown. EDIT: the words. It jumps to the sign-up box at the top. -->
+  <div class="foot-cta"><a class="door-btn" href="#top" data-focus-email>Register interest <span aria-hidden="true"></span></a></div>
+  <div class="foot-base">
+    <p>&copy; 2026 Lakeside Pavilion. All rights reserved.</p>
+    <a class="foot-up" href="#top">Back to top <span aria-hidden="true">&uarr;</span></a>
+  </div>
+</footer>
+</div>
+<!-- REGISTER INTEREST FORM: a pop-up that opens from every "Register interest", "Notify me" and "Be the first to know" button.
+     EDIT: the title, line and choices. The form is NOT connected yet: see "Register interest form" in js/main.js. -->
+<dialog class="ri" id="register" aria-labelledby="ri-title">
+  <form class="ri-form" id="ri-form" novalidate>
+    <button class="ri-close" type="button" aria-label="Close" data-ri-close><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <p class="ri-kicker">Lakeside Pavilion &middot; Purbachal, Dhaka</p>
+    <h2 class="ri-title" id="ri-title">Register your <em>interest.</em></h2>
+    <p class="ri-lead">Be among the first to hear about plans, prices and the launch date.</p>
+
+    <div class="ri-grid">
+      <label class="ri-field"><span>Full name</span>
+        <input name="name" type="text" autocomplete="name" required placeholder="Your name"></label>
+      <label class="ri-field"><span>Phone</span>
+        <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="+880 1XXX-XXXXXX"></label>
+      <label class="ri-field ri-wide"><span>Email</span>
+        <input name="email" type="email" inputmode="email" autocomplete="email" required placeholder="name@example.com"></label>
+    </div>
+
+    <fieldset class="ri-choices">
+      <legend>I am interested in</legend>
+      <label><input type="radio" name="interest" value="ownership" checked><span>Owning a property</span></label>
+      <label><input type="radio" name="interest" value="investment"><span>Halal investment</span></label>
+      <label><input type="radio" name="interest" value="hospitality"><span>Hospitality &amp; stays</span></label>
+      <label><input type="radio" name="interest" value="updates"><span>Just updates</span></label>
+    </fieldset>
+
+    <label class="ri-field ri-wide"><span>Message <i>(optional)</i></span>
+      <textarea name="message" rows="3" placeholder="Anything you would like us to know"></textarea></label>
+
+    <label class="ri-consent"><input type="checkbox" name="consent" required><span>I agree to be contacted about Lakeside Pavilion.</span></label>
+
+    <div class="ri-foot">
+      <button class="ri-submit" type="submit">Register interest <span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+      <p class="ri-note" id="ri-note" role="status" aria-live="polite"></p>
+    </div>
+  </form>
+</dialog>
+
+<script src="js/main.js"></script>
+<script>if (LP_EDIT) { var s = document.createElement('script'); s.src = 'js/edit.js'; document.body.appendChild(s); }</script>
+</body>
+</html>
