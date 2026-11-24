@@ -13,7 +13,8 @@
   var email = document.getElementById('email');
   var note = document.getElementById('note');
 
-  form.addEventListener('submit', function (e) {
+  /* the hero sign-up card was removed on 2026-11-23; everything below still works without it */
+  if (form && email && note) form.addEventListener('submit', function (e) {
     e.preventDefault();
     var value = email.value.trim();
 
@@ -39,8 +40,8 @@
   document.querySelectorAll('[data-focus-email]').forEach(function (link) {
     link.addEventListener('click', function (e) {
       e.preventDefault();
-      if (window.LP_openRegister) window.LP_openRegister(email.value.trim());
-      else email.focus();
+      if (window.LP_openRegister) window.LP_openRegister(email ? email.value.trim() : '');
+      else if (email) email.focus();
     });
   });
 })();

@@ -1,0 +1,3 @@
+Put the posters in this folder, named 01.jpg, 02.jpg and 03.jpg.
+Upright, 4 wide by 5 tall (for example 1080 x 1350). Other upright sizes work too; they are trimmed to fit the card.
+A card whose picture is missing shows "Poster coming soon".

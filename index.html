@@ -97,7 +97,7 @@
       <nav class="links" data-move="menu" aria-label="Main">
         <a href="#about">Overview</a>
         <a href="#offer">Ownership</a>
-        <a href="#films">Films</a>
+        <a href="#posters">Posters</a>
         <a hidden href="#gallery">Gallery</a>
         <a href="#footer">Contact</a>
       </nav>
@@ -133,18 +133,20 @@
       </div>
     </div>
 
-    <!-- SIGN-UP CARD. The form is not connected to anything yet: see js/main.js. -->
-    <form class="card" data-move="signup-card" id="notify" novalidate>
-      <p class="big">Be first</p>
-      <label for="email">to hear when we launch. Leave your email.</label>
-      <div class="row">
-        <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Email address">
-        <button class="send" id="send" type="submit" aria-label="Notify me">
-          <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-        </button>
-      </div>
-      <p class="note" id="note" role="status" aria-live="polite"></p>
-    </form>
+    <!-- HERO SEAL (replaced the "Be first" sign-up card, 2026-11-23): a gold ring of words that turns slowly
+         round a glass button; pressing it scrolls down to the About section. Under it, the site's map position.
+         EDIT: the words on the ring (keep them short) and the coordinates. -->
+    <a class="hero-seal" data-move="hero-seal" href="#about" aria-label="Scroll down to learn more about Lakeside Pavilion">
+      <svg class="hero-seal-ring" viewBox="0 0 160 160" aria-hidden="true">
+        <defs><path id="hero-seal-path" d="M80 80 m-62 0 a62 62 0 1 1 124 0 a62 62 0 1 1 -124 0"/></defs>
+        <circle class="hero-seal-edge" cx="80" cy="80" r="77"/>
+        <g class="hero-seal-words"><text><textPath href="#hero-seal-path" textLength="380">COMING SOON &#8226; PURBACHAL &#8226; DHAKA &#8226; LAKESIDE PAVILION &#8226;</textPath></text></g>
+      </svg>
+      <span class="hero-seal-core" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 4v15M6 13l6 6 6-6"/></svg>
+      </span>
+      <span class="hero-seal-geo">23.84&deg; N &middot; 90.50&deg; E</span>
+    </a>
 
   </div>
   <!-- fills the rest of the screen with lake water when the window is taller than the photo -->
@@ -262,43 +264,17 @@
   </div>
 </section>
 
-<!-- REELS: upright videos, like phone reels. Pressing a card plays its video with sound and stops the others.
-     EDIT: put the videos in assets/reels/ as 01.mp4 ... 04.mp4 (see READ-ME.txt there) and change the names
-     in <p class="reel-name">. Add or delete <li> blocks to change how many there are. A card whose video
-     file is missing shows "Video coming soon". -->
-<section class="reels" id="films" aria-labelledby="reels-title">
+<!-- POSTERS (replaced the film, 2026-11-23): three posters side by side (a row you swipe on phones).
+     EDIT: put the posters in assets/posters/ as 01.jpg, 02.jpg, 03.jpg (upright, 4 wide by 5 tall, for example
+     1080 x 1350). Change the words in alt="..." to describe each one. Add or delete an <li> block to show 2 or 4.
+     A card whose picture is missing shows "Poster coming soon". The old film is still in assets/film/. -->
+<section class="reels posters" id="posters" aria-labelledby="reels-title">
   <!-- EDIT: headline (words inside <em> are shown in gold) -->
-  <h2 class="reels-title" id="reels-title">See it <em>in motion.</em></h2>
+  <h2 class="reels-title" id="reels-title">First <em>looks.</em></h2>
   <ul class="reels-row">
-    <!-- ONE FILM (2026-11-20): assets/film/lakeside-film.mp4 (1080p web copy of Lakeside_Pavilion_TV_Loop_Final_v3.mp4)
-         with assets/film/lakeside-film.jpg as its cover. Press it to play with sound; press again to pause. -->
-    <li class="reel reel-film" data-reel>
-      <video src="assets/film/lakeside-film.mp4" poster="assets/film/lakeside-film.jpg" preload="metadata" playsinline loop aria-label="Lakeside Pavilion: the film"></video>
-      <button class="reel-play" type="button" aria-label="Play: Lakeside Pavilion, the film"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
-      <p class="reel-name">Lakeside Pavilion, the film</p>
-    </li>
-    <!-- The four upright reels that were here before (no video files yet). To bring them back, move them out of this comment.
-    <li class="reel" data-reel>
-      <video src="assets/reels/01.mp4" poster="assets/reels/01.jpg" preload="none" playsinline loop aria-label="The pavilion and promenade on the lake front"></video>
-      <button class="reel-play" type="button" aria-label="Play: The lake front"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
-      <p class="reel-name">The lake front</p>
-    </li>
-    <li class="reel" data-reel>
-      <video src="assets/reels/02.mp4" poster="assets/reels/02.jpg" preload="none" playsinline loop aria-label="Homes and green space along palm-lined roads"></video>
-      <button class="reel-play" type="button" aria-label="Play: The neighbourhood"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
-      <p class="reel-name">The neighbourhood</p>
-    </li>
-    <li class="reel" data-reel>
-      <video src="assets/reels/03.mp4" poster="assets/reels/03.jpg" preload="none" playsinline loop aria-label="The avenue leading to the site"></video>
-      <button class="reel-play" type="button" aria-label="Play: Getting there"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
-      <p class="reel-name">Getting there</p>
-    </li>
-    <li class="reel" data-reel>
-      <video src="assets/reels/04.mp4" poster="assets/reels/04.jpg" preload="none" playsinline loop aria-label="The wide green country around the site at sunset"></video>
-      <button class="reel-play" type="button" aria-label="Play: The setting"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
-      <p class="reel-name">The setting</p>
-    </li>
-    -->
+    <li class="reel poster"><img src="assets/posters/01.jpg" alt="Lakeside Pavilion poster 1" loading="lazy" draggable="false" onerror="this.parentNode.classList.add('is-empty')"></li>
+    <li class="reel poster"><img src="assets/posters/02.jpg" alt="Lakeside Pavilion poster 2" loading="lazy" draggable="false" onerror="this.parentNode.classList.add('is-empty')"></li>
+    <li class="reel poster"><img src="assets/posters/03.jpg" alt="Lakeside Pavilion poster 3" loading="lazy" draggable="false" onerror="this.parentNode.classList.add('is-empty')"></li>
   </ul>
 </section>
 </div>
@@ -339,15 +315,14 @@
         <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.500 5.500a2 2 0 0 1 2-2z"/></svg><span>+880 0000 000000</span></li>
         <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.500-6.200-6.500-11a6.500 6.500 0 0 1 13 0c0 4.800-6.500 11-6.500 11z"/><circle cx="12" cy="10" r="2.300"/></svg><span>Purbachal, Dhaka</span></li>
       </ul>
-      <!-- SOCIAL LINKS. EDIT: put each page's real address in href (they are "#" placeholders). Delete a line to drop a network. -->
+      <!-- SOCIAL LINKS (real addresses since 2026-11-23). Delete a line to drop a network. -->
       <ul class="foot-social">
-        <li><a href="#" aria-label="Lakeside Pavilion on Facebook" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 21v-7h2.6l.4-3.2h-3V8.9c0-.9.3-1.6 1.6-1.6h1.6V4.5a20 20 0 0 0-2.4-.1c-2.4 0-4 1.4-4 4.1v2.3H8.6V14h2.7v7"/></svg></a></li>
-        <li><a href="#" aria-label="Lakeside Pavilion on Instagram" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.8" y="3.8" width="16.4" height="16.4" rx="4.8"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.1" cy="6.9" r=".9" fill="currentColor" stroke="none"/></svg></a></li>
-        <li><a href="#" aria-label="Lakeside Pavilion on YouTube" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5.8" width="19" height="12.4" rx="3.6"/><path d="M10.2 9.3v5.4l4.6-2.7z" fill="currentColor"/></svg></a></li>
-        <li><a href="#" aria-label="Lakeside Pavilion on LinkedIn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M8 10.5v6M8 7.4v.2M11.6 16.5v-6M11.6 13.4c0-1.7 1.1-2.9 2.6-2.9s2.2 1 2.2 2.7v3.3"/></svg></a></li>
-        <li><a href="#" aria-label="Lakeside Pavilion on X" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 4.5h4.2l10.8 15h-4.2zM19.2 4.5l-5.9 6.6M10.7 12.9l-5.9 6.6"/></svg></a></li>
-        <li><a href="#" aria-label="Lakeside Pavilion on TikTok" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.8 3.8v11.1a3.4 3.4 0 1 1-3.4-3.4"/><path d="M13.8 3.8c.3 2.6 2.1 4.4 4.9 4.6"/></svg></a></li>
-        <li><a href="#" aria-label="Lakeside Pavilion on WhatsApp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.3 19.7l1.1-3.9a8.2 8.2 0 1 1 3.1 3z"/><path d="M9.3 8.4c-.3 3.3 3 6.6 6.3 6.3l.8-1.4-1.9-1-.9.8a4.6 4.6 0 0 1-2.1-2.1l.8-.9-1-1.9z"/></svg></a></li>
+        <li><a href="https://www.facebook.com/lakesidepavilion.com.bd" aria-label="Lakeside Pavilion on Facebook" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 21v-7h2.6l.4-3.2h-3V8.9c0-.9.3-1.6 1.6-1.6h1.6V4.5a20 20 0 0 0-2.4-.1c-2.4 0-4 1.4-4 4.1v2.3H8.6V14h2.7v7"/></svg></a></li>
+        <li><a href="https://www.instagram.com/lakesidepavilion.com.bd/" aria-label="Lakeside Pavilion on Instagram" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.8" y="3.8" width="16.4" height="16.4" rx="4.8"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.1" cy="6.9" r=".9" fill="currentColor" stroke="none"/></svg></a></li>
+        <li><a href="https://www.youtube.com/@LakesidePavilion" aria-label="Lakeside Pavilion on YouTube" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5.8" width="19" height="12.4" rx="3.6"/><path d="M10.2 9.3v5.4l4.6-2.7z" fill="currentColor"/></svg></a></li>
+        <li><a href="https://www.linkedin.com/company/lakeside-pavilion-purbachal-dhaka/" aria-label="Lakeside Pavilion on LinkedIn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M8 10.5v6M8 7.4v.2M11.6 16.5v-6M11.6 13.4c0-1.7 1.1-2.9 2.6-2.9s2.2 1 2.2 2.7v3.3"/></svg></a></li>
+        <li><a href="https://x.com/LakesidePavBD" aria-label="Lakeside Pavilion on X" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 4.5h4.2l10.8 15h-4.2zM19.2 4.5l-5.9 6.6M10.7 12.9l-5.9 6.6"/></svg></a></li>
+        <li><a href="https://www.tiktok.com/@lakesidepavilion.com.bd" aria-label="Lakeside Pavilion on TikTok" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.8 3.8v11.1a3.4 3.4 0 1 1-3.4-3.4"/><path d="M13.8 3.8c.3 2.6 2.1 4.4 4.9 4.6"/></svg></a></li>
       </ul>
     </div>
     <nav class="foot-col" aria-label="Project">
@@ -355,7 +330,7 @@
       <a href="#about">Overview</a>
       <a href="#offer">Ownership</a>
       <a hidden href="#gallery">Gallery</a>
-      <a href="#films">Films</a>
+      <a href="#posters">Posters</a>
     </nav>
     <nav class="foot-col" aria-label="Company">
       <h3>Company</h3>
